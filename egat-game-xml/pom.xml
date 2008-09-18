@@ -1,0 +1,57 @@
+<project>
+    <parent>
+        <groupId>edu.umich.eecs.ai.egat</groupId>
+        <artifactId>egat</artifactId>
+        <version>0.1-alpha-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>egat-game-xml</artifactId>
+    <version>0.1-alpha-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>EGAT Game XML</name>
+    <description>Empirical Game Analysis Toolkit Game XML persistent backing</description>
+    <url>http://www.eecs.umich.edu/egat</url>
+    <inceptionYear>2003</inceptionYear>
+    <organization>
+        <name>Regents of the University of Michigan</name>
+        <url>http://www.umich.edu/~regents/</url>
+    </organization>
+    <dependencies>
+      <dependency>
+        <groupId>edu.umich.eecs.ai.egat</groupId>
+        <artifactId>egat-game</artifactId>
+        <version>0.1-alpha-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+          <groupId>jdom</groupId>
+          <artifactId>jdom</artifactId>
+          <version>1.0</version>        
+      </dependency>
+    </dependencies>
+    <developers>
+        <developer>
+            <id>prjordan</id>
+            <name>Patrick Jordan</name>
+            <email>prjordan [at] umich.edu</email>
+            <roles>
+                <role>Research Scientist</role>
+                <role>Java Developer</role>
+            </roles>
+            <url>http://www.eecs.umich.edu/~prjordan</url>
+            <organization>University of Michigan AI Laboratory</organization>
+            <timezone>-5</timezone>
+        </developer>
+    </developers>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
