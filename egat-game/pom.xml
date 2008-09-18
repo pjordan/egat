@@ -1,0 +1,108 @@
+<project>
+    <parent>
+        <groupId>edu.umich.eecs.ai.egat</groupId>
+        <artifactId>egat</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>egat-game</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>EGAT Game</name>
+    <description>Empirical Game Analysis Toolkit Game Interfaces</description>
+    <url>http://www.eecs.umich.edu/egat</url>
+    <inceptionYear>2003</inceptionYear>
+    <organization>
+        <name>Regents of the University of Michigan</name>
+        <url>http://www.umich.edu/~regents/</url>
+    </organization>
+    <dependencies>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>3.8.1</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+    <developers>
+        <developer>
+            <id>prjordan</id>
+            <name>Patrick Jordan</name>
+            <email>prjordan [at] umich.edu</email>
+            <roles>
+                <role>Research Scientist</role>
+                <role>Java Developer</role>
+            </roles>
+            <url>http://www.eecs.umich.edu/~prjordan</url>
+            <organization>University of Michigan AI Laboratory</organization>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>yvorobey</id>
+            <name>Yevgeniy Vorobeychik</name>
+            <email>yvorobey [at] eecs.umich.edu</email>
+            <roles>
+                <role>Research Scientist</role>
+                <role>Java Developer</role>
+            </roles>
+            <organization>University of Michigan AI Laboratory</organization>
+            <timezone>-5</timezone>
+        </developer>
+    </developers>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+	        <artifactId>maven-pmd-plugin</artifactId>
+		<groupId>org.apache.maven.plugins</groupId>
+		<version>2.0-beta-1</version>
+		<configuration>
+        <rulesets>
+          <ruleset>/rulesets/basic.xml</ruleset>
+          <ruleset>/rulesets/controversial.xml</ruleset>
+          <ruleset>/rulesets/optimizations.xml</ruleset>
+	  <ruleset>/rulesets/clone.xml</ruleset>
+	  <ruleset>/rulesets/design.xml</ruleset>
+	  <ruleset>/rulesets/naming.xml</ruleset>
+	  <ruleset>/rulesets/strings.xml</ruleset>
+	</rulesets>
+        <sourceEncoding>utf-8</sourceEncoding>
+        <minimumTokens>100</minimumTokens>
+        <targetJdk>1.5</targetJdk>
+      </configuration>
+		    </plugin>
+        </plugins>
+    </reporting>
+</project>

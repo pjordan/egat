@@ -1,0 +1,64 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.umich.eecs.ai.egat</groupId>
+  <version>0.1-SNAPSHOT</version>
+  <artifactId>egat</artifactId>
+  <packaging>pom</packaging>
+  <name>EGAT</name>
+  <description>Empirical Game Analysis Toolkit</description>
+  <url>http://www.eecs.umich.edu/egat</url>
+  <inceptionYear>2003</inceptionYear>
+  <organization>
+    <name>Regents of the University of Michigan</name>
+    <url>http://www.umich.edu/~regents/</url>
+  </organization>
+  <developers>
+      <developer>
+         <id>prjordan</id>
+         <name>Patrick Jordan</name>
+         <email>prjordan [at] umich.edu</email>
+         <roles>
+            <role>Research Scientist</role>
+         </roles>
+         <url>http://www.eecs.umich.edu/~prjordan</url>
+         <organization>University of Michigan AI Laboratory</organization>
+         <timezone>-5</timezone>
+       </developer>    
+       <developer>
+         <id>yvorobey</id>
+         <name>Yevgeniy Vorobeychik</name>
+         <email>yvorobey [at] eecs.umich.edu</email>
+         <roles>
+            <role>Research Scientist</role>
+            <role>Java Developer</role>
+         </roles>
+         <organization>University of Michigan AI Laboratory</organization>
+         <timezone>-5</timezone>
+       </developer> 
+       <developer>
+         <id>wellman</id>
+         <name>Michael Wellman</name>
+         <email>wellman [at] umich.edu</email>
+         <roles>
+            <role>Project Manager</role>
+         </roles>
+         <url>http://ai.eecs.umich.edu/people/wellman</url>
+         <organization>University of Michigan AI Laboratory</organization>
+         <timezone>-5</timezone>
+       </developer>         
+       <developer>
+         <id>omalley</id>
+         <name>Kevin O'Malley</name>
+         <email>omalley [at] umich.edu</email>
+         <roles>
+            <role>Java Developer</role>
+         </roles>
+         <url>http://ai.eecs.umich.edu/people/omalley</url>
+         <organization>University of Michigan AI Laboratory</organization>
+         <timezone>-5</timezone>
+       </developer> 
+   </developers>
+  <modules>
+    <module>egat-game</module>
+  </modules>
+</project>
