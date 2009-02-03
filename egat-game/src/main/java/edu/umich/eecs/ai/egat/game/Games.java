@@ -51,31 +51,31 @@ public final class Games {
 
 
     /**
-     * Create an outcome traversal object for a strategic game.
+     * Create an outcome traversal object for a strategic simulation.
      *
-     * @param game the strategic game
+     * @param simulation the strategic simulation
      * @return the outcome traversal
      */
-    public static OutcomeTraversal traversal(StrategicGame game) {
-        return new DefaultOutcomeTraversal(game);
+    public static OutcomeTraversal traversal(StrategicSimulation simulation) {
+        return new DefaultOutcomeTraversal(simulation);
     }
 
     /**
-     * Create an outcome traversal object for a symmetric game.
+     * Create an outcome traversal object for a symmetric simulation.
      * This implemenation will avoid repeated (symmetric) outcomes.
      *
-     * @param game the symmetric game.
+     * @param simulation the symmetric simulation.
      * @return the outcome traversal.
      */
-    public static SymmetricOutcomeTraversal symmetricTraversal(SymmetricGame game) {
-        return new SymmetricOutcomeTraversalImpl(game);
+    public static SymmetricOutcomeTraversal symmetricTraversal(SymmetricSimulation simulation) {
+        return new SymmetricOutcomeTraversalImpl(simulation);
     }
 
     static class DefaultOutcomeTraversal implements OutcomeTraversal {
-        StrategicGame game;
+        StrategicSimulation game;
 
-        public DefaultOutcomeTraversal(StrategicGame game) {
-            this.game = game;
+        public DefaultOutcomeTraversal(StrategicSimulation simulation) {
+            this.game = simulation;
         }
 
         public Iterator<Outcome> iterator() {
@@ -84,18 +84,18 @@ public final class Games {
 
 
         private static class IteratorImpl implements Iterator<Outcome> {
-            private StrategicGame game;
+            private StrategicSimulation simulation;
             private CrossProductIterator<Action> iterator;
             private List<Player> players;
 
-            public IteratorImpl(StrategicGame game) {
-                this.game = game;
+            public IteratorImpl(StrategicSimulation simulation) {
+                this.simulation = simulation;
 
                 List<Set<Action>> actions = new LinkedList<Set<Action>>();
                 players = new ArrayList<Player>();
-                for (Player p : game.players()) {
+                for (Player p : simulation.players()) {
                     players.add(p);
-                    actions.add(game.getActions(p));
+                    actions.add(simulation.getActions(p));
                 }
 
                 iterator = new CrossProductIterator<Action>(actions);
@@ -173,31 +173,31 @@ public final class Games {
     }
 
     static class SymmetricOutcomeTraversalImpl implements SymmetricOutcomeTraversal {
-        private SymmetricGame game;
+        private SymmetricSimulation simulation;
 
-        public SymmetricOutcomeTraversalImpl(SymmetricGame game) {
-            this.game = game;
+        public SymmetricOutcomeTraversalImpl(SymmetricSimulation simulation) {
+            this.simulation = simulation;
         }
 
         public Iterator<SymmetricOutcome> iterator() {
-            return new IteratorImpl(game);
+            return new IteratorImpl(simulation);
         }
 
         private static class IteratorImpl implements Iterator<SymmetricOutcome> {
-            private SymmetricGame game;
+            private SymmetricSimulation simulation;
             private SymmetryIterator<Action> iterator;
 
             private List<Player> players;
 
-            public IteratorImpl(SymmetricGame game) {
-                this.game = game;
+            public IteratorImpl(SymmetricSimulation simulation) {
+                this.simulation = simulation;
 
                 Set<Action> actions = new HashSet<Action>();
                 players = new ArrayList<Player>();
-                for (Player p : game.players()) {
+                for (Player p : simulation.players()) {
                     players.add(p);
                     if (actions != null) {
-                        actions = game.getActions(p);
+                        actions = simulation.getActions(p);
                     }
                 }
 
@@ -304,8 +304,8 @@ public final class Games {
     /**
      * Create a deviation of an outcome.
      *
-     * @param player the player deviating
-     * @param action the action
+     * @param player  the player deviating
+     * @param action  the action
      * @param outcome the outcome being deviated
      * @return the outcome represented by the mapping between the players and actions.
      */
@@ -313,8 +313,8 @@ public final class Games {
         Player[] players = outcome.players().toArray(new Player[0]);
         Action[] actions = new Action[players.length];
 
-        for(int i = 0; i < players.length; i++) {
-            if(players[i].equals(player))
+        for (int i = 0; i < players.length; i++) {
+            if (players[i].equals(player))
                 actions[i] = action;
             else
                 actions[i] = outcome.getAction(players[i]);
@@ -330,7 +330,7 @@ public final class Games {
      * @return the outcome represented by the mapping between the players and actions.
      */
     public static SymmetricOutcome createSymmetricOutcome(Outcome outcome) {
-        return (outcome instanceof SymmetricOutcome) ? (SymmetricOutcome)outcome : new SymmetricOutcomeImpl(outcome);
+        return (outcome instanceof SymmetricOutcome) ? (SymmetricOutcome) outcome : new SymmetricOutcomeImpl(outcome);
     }
 
     /**
@@ -341,8 +341,9 @@ public final class Games {
      * @return the outcome represented by the mapping between the players and actions.
      */
     public static SymmetricOutcome createSymmetricOutcome(final Player[] players, final Action[] actions) {
-        return createSymmetricOutcome(createOutcome(players,actions));
+        return createSymmetricOutcome(createOutcome(players, actions));
     }
+
     /**
      * Create a strategy by wrapping the actions and probabilities arrays.
      *
@@ -357,12 +358,12 @@ public final class Games {
     /**
      * Create a profile by wrapping the players and strategies arrays.
      *
-     * @param players      the array of players in the profile.
+     * @param players    the array of players in the profile.
      * @param strategies the array of strategies in the profile.
      * @return the profile represented by the mapping between the players and values.
      */
     public static Profile createProfile(final Player[] players, final Strategy[] strategies) {
-        return new ProfileImpl(players,strategies);
+        return new ProfileImpl(players, strategies);
     }
 
     static class ProfileImpl extends UnmodifiableReducedMapImpl<Player, Strategy> implements Profile {
@@ -400,20 +401,20 @@ public final class Games {
 
     static class SymmetricOutcomeImpl implements SymmetricOutcome {
         private Outcome outcome;
-        private Map<Action,Integer> counts;
+        private Map<Action, Integer> counts;
 
         public SymmetricOutcomeImpl(Outcome outcome) {
             this.outcome = outcome;
-            counts = new HashMap<Action,Integer>();
+            counts = new HashMap<Action, Integer>();
 
-            for(Player player : outcome.players()) {
+            for (Player player : outcome.players()) {
                 Action a = outcome.getAction(player);
 
-                if(!counts.containsKey(a)) {
-                    counts.put(a,new Integer(0));
+                if (!counts.containsKey(a)) {
+                    counts.put(a, new Integer(0));
                 }
 
-                counts.put(a,counts.get(a)+1);
+                counts.put(a, counts.get(a) + 1);
             }
         }
 
@@ -444,7 +445,7 @@ public final class Games {
 
         public Integer getCount(Action action) {
             Integer count = counts.get(action);
-            return count==null ? new Integer(0) : count;
+            return count == null ? new Integer(0) : count;
         }
 
         public Set<Map.Entry<Action, Integer>> actionEntrySet() {
@@ -452,7 +453,7 @@ public final class Games {
         }
 
         public boolean symmetricEquals(SymmetricOutcome outcome) {
-            if(outcome==null)
+            if (outcome == null)
                 return false;
 
             return actionEntrySet().equals(outcome.actionEntrySet());
@@ -475,7 +476,7 @@ public final class Games {
 
         public boolean equals(Object object) {
             super.equals(object);
-            
+
             if (!(object instanceof Outcome)) {
                 return false;
             }
@@ -504,7 +505,7 @@ public final class Games {
         }
 
         public Number getProbability(Action action) {
-            return get(action)==null ? 0.0 : get(action).doubleValue();
+            return get(action) == null ? 0.0 : get(action).doubleValue();
         }
 
         public boolean equals(Object object) {
@@ -554,7 +555,7 @@ public final class Games {
         public boolean equals(Object object) {
             if (!(object instanceof UnmodifiableReducedMapImpl))
                 return false;
-            if (hashCode!=object.hashCode())
+            if (hashCode != object.hashCode())
                 return false;
             return entrySet().equals(((UnmodifiableReducedMapImpl) object).entrySet());
         }
@@ -607,35 +608,35 @@ public final class Games {
         Collection<Action> toActions = to.actions();
         Collection<Action> fromActions = from.actions();
 
-        for(Action action : toActions) {
-            if(a==null)
+        for (Action action : toActions) {
+            if (a == null)
                 a = action;
 
-            if(to.getCount(action)>from.getCount(action)) {
+            if (to.getCount(action) > from.getCount(action)) {
                 a = action;
                 break;
             }
         }
 
-        for(Action action : fromActions) {
-            if(b==null)
+        for (Action action : fromActions) {
+            if (b == null)
                 b = action;
-            if(to.getCount(action)<from.getCount(action)) {
+            if (to.getCount(action) < from.getCount(action)) {
                 b = action;
                 break;
             }
         }
 
-        for(Player p : to.players()) {
-            if(to.getAction(p)==a) {
+        for (Player p : to.players()) {
+            if (to.getAction(p) == a) {
                 players[0] = p;
                 break;
             }
 
         }
 
-        for(Player p : from.players()) {
-            if(from.getAction(p)==b) {
+        for (Player p : from.players()) {
+            if (from.getAction(p) == b) {
                 players[1] = p;
                 break;
             }
@@ -652,11 +653,22 @@ public final class Games {
     public static double regret(SymmetricOutcome outcome, SymmetricGame game) {
         double epsilon = 0.0;
 
-        for (SymmetricOutcome deviation : DeviationFactory.deviationTraversal(outcome,game)) {
+        for (SymmetricOutcome deviation : DeviationFactory.deviationTraversal(outcome, game)) {
             Player[] players = findDeviatingPlayers(deviation, outcome);
-            epsilon = Math.max(epsilon, deviationGain(game.payoff(outcome),game.payoff(deviation),players));
+            epsilon = Math.max(epsilon, deviationGain(game.payoff(outcome), game.payoff(deviation), players));
         }
-        
+
+        return epsilon;
+    }
+
+    public static double regret(Outcome outcome, StrategicGame game) {
+        double epsilon = 0.0;
+
+        for (Player player : game.players()) {
+            for (Outcome deviation : DeviationFactory.deviationTraversal(outcome, game, player)) {
+                epsilon = Math.max(epsilon, deviationGain(game.payoff(outcome), game.payoff(deviation), player));
+            }
+        }
         return epsilon;
     }
 }

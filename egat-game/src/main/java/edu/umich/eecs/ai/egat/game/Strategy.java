@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Player strategy in a {@link StrategicGame strategic game}.
+ * Player strategy in a {@link StrategicGame strategic simulation}.
  * <p/>
  * <p>The methods {@link #equals(Object)} and {@link #hashCode()}
  * should reflect the action-probability map.

@@ -2,10 +2,9 @@ package edu.umich.eecs.ai.egat.game;
 
 import java.util.Set;
 import java.util.Map;
-import java.util.Collection;
 
 /**
- * Payoff interface that provides a mapping between {@link edu.umich.eecs.ai.egat.game.Player game players}
+ * Payoff interface that provides a mapping between {@link edu.umich.eecs.ai.egat.game.Player simulation players}
  *  and their corresponding {@link Number value}.
  * {@link edu.umich.eecs.ai.egat.game.StrategicGame Strategic games} use this mapping to determine a
  * {@link SymmetricPayoff payoff}.
@@ -31,4 +30,10 @@ public interface SymmetricPayoff<T extends PayoffValue> extends Payoff<T>{
      * @return the set of players.
      */
     Set<Action> actions();
+
+    /**
+     * Get the action-value map.
+     * @return the action-value map.
+     */
+    Map<Action, T> valueMap();
 }

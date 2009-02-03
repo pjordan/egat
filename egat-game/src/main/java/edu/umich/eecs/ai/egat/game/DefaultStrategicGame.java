@@ -45,4 +45,8 @@ public class DefaultStrategicGame<T extends PayoffValue> extends AbstractStrateg
     public void putPayoff(Outcome outcome, Payoff<T> payoff) {
         outcomeMap.put(outcome,payoff);        
     }
+
+    public void removeAction(Player player, Action action) {
+        playerActions.get(player).remove(action);
+    }
 }

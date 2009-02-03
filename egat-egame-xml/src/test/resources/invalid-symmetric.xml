@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<observer>
+    <simulation name="TEST" description="TEST">
+        <players>
+            <player id="alice"/>
+            <player id="bob"/>
+        </players>
+        <actions>
+            <action id="a"/>
+            <action id="b"/>
+        </actions>
+    </simulation>
+    <observations>
+        <observation>
+            <outcome action="a" count="2" value="2.0"/>
+        </observation>
+        <observation>
+            <outcome action="a" count="1" value="0.0"/>
+            <outcome action="b" count="1" value="1.0"/>
+        </observation>
+    </observations>
+    <invalid>        
+    </invalid>
+</observer>

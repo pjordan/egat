@@ -7,7 +7,7 @@
 package edu.umich.eecs.ai.egat.game;
 
 /**
- * The player interface for a game.  The contract for {@link Player}
+ * The player interface for a simulation.  The contract for {@link Player}
  * requires that two players areequal if {@link #getID()} returns equal
  * strings for both players.
  *

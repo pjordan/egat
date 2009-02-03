@@ -19,22 +19,26 @@ public class DefaultOutcomeMap<T> implements OutcomeMap<T,Outcome>{
 
 
 
-    public void build(StrategicGame game) {
+    public void build(StrategicSimulation simulation) {
         int index = 0;
-        indexPlayer = game.players().toArray(new Player[0]);
+        indexPlayer = simulation.players().toArray(new Player[0]);
         playerActionIndex = (Map<Action, Integer>[])new Map[indexPlayer.length];
 
-        for (Player p : game.players()) {
+        for (Player p : simulation.players()) {
             indexPlayer[index]=p;
             int aindex = 0;
             Map<Action, Integer> amap = new HashMap<Action, Integer>();
-            for (Action a : (Set<Action>)game.getActions(p)) {
+            for (Action a : (Set<Action>)simulation.getActions(p)) {
                 amap.put(a, aindex++);
             }
             playerActionIndex[index++]= amap;
         }
 
-        outcomeT = buildRecursive(0,index);
+        if(index > 0) {
+            outcomeT = buildRecursive(0,index);
+        } else {
+            outcomeT = Collections.emptyList();
+        }
         playerCount = index;
     }
 
