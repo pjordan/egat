@@ -650,6 +650,80 @@ public final class Games {
         return to.getPayoff(p[0]).getValue() - from.getPayoff(p[1]).getValue();
     }
 
+    public static double robustRegret(Action action, SymmetricGame game) {
+        double epsilon = 0.0;
+
+        Set<Action> otherActions = new HashSet<Action>(game.getActions());
+        otherActions.remove(action);
+
+        for (SymmetricOutcome outcome : Games.symmetricTraversal(game)) {
+            if(outcome.getCount(action) > 0) {
+                Player[] players = outcome.players().toArray(new Player[0]);
+                Action[] actions = new Action[players.length];
+
+                int index = -1;
+
+                for(int i = 0; i < players.length; i++) {
+                    actions[i] = outcome.getAction(players[i]);
+
+                    if(action.equals(actions[i])) {
+                        index = i;
+                    }
+                }
+
+
+                double outcomePayoff = game.payoff(outcome).getPayoff(action).getValue();
+
+                for(Action other : otherActions) {
+                    actions[index] = other;
+                    SymmetricOutcome deviation = Games.createSymmetricOutcome(players,actions);
+
+                    double otherPayoff = game.payoff(deviation).getPayoff(other).getValue();
+                    epsilon = Math.max(epsilon, otherPayoff - outcomePayoff);
+                }
+            }                                    
+        }
+
+        return epsilon;
+    }
+
+    public static double robustRegret(Player player, Action action, StrategicGame game) {
+        double epsilon = 0.0;
+
+        Set<Action> otherActions = new HashSet<Action>(game.getActions(player));
+        otherActions.remove(action);
+
+        for (Outcome outcome : Games.traversal(game)) {
+            if(action.equals(outcome.getAction(player))) {
+                Player[] players = outcome.players().toArray(new Player[0]);
+                Action[] actions = new Action[players.length];
+
+                int index = -1;
+
+                for(int i = 0; i < players.length; i++) {
+                    actions[i] = outcome.getAction(players[i]);
+
+                    if(player.equals(players[i])) {
+                        index = i;
+                    }
+                }
+
+
+                double outcomePayoff = game.payoff(outcome).getPayoff(player).getValue();
+
+                for(Action other : otherActions) {
+                    actions[index] = other;
+                    Outcome deviation = Games.createOutcome(players,actions);
+
+                    double otherPayoff = game.payoff(deviation).getPayoff(player).getValue();
+                    epsilon = Math.max(epsilon, otherPayoff - outcomePayoff);
+                }
+            }
+        }
+
+        return epsilon;
+    }
+
     public static double regret(SymmetricOutcome outcome, SymmetricGame game) {
         double epsilon = 0.0;
 

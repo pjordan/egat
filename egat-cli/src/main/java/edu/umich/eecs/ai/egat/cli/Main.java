@@ -11,6 +11,7 @@ import edu.umich.eecs.ai.egat.cli.regret.RegretCommandHandler;
 import edu.umich.eecs.ai.egat.cli.ieds.IEDSCommandHandler;
 import edu.umich.eecs.ai.egat.cli.replicatordynamics.ReplicatorDynamicsCommandHandler;
 import edu.umich.eecs.ai.egat.cli.neresponse.NEResponseCommandHandler;
+import edu.umich.eecs.ai.egat.cli.robustregret.RobustRegretCommandHandler;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -98,6 +99,7 @@ public class Main {
         List<CommandHandler> commandHandlers = new ArrayList<CommandHandler>();
 
         commandHandlers.add(new RegretCommandHandler());
+        commandHandlers.add(new RobustRegretCommandHandler());
         commandHandlers.add(new IEDSCommandHandler());
         commandHandlers.add(new ReplicatorDynamicsCommandHandler());
         commandHandlers.add(new NEResponseCommandHandler());
