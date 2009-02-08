@@ -21,12 +21,7 @@
         <groupId>edu.umich.eecs.ai.egat</groupId>
         <artifactId>egat-game</artifactId>
         <version>0.1-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-          <groupId>jdom</groupId>
-          <artifactId>jdom</artifactId>
-          <version>1.0</version>        
-      </dependency>
+      </dependency>      
     </dependencies>
     <developers>
         <developer>
