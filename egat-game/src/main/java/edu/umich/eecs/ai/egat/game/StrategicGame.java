@@ -14,15 +14,8 @@ import java.util.Set;
  *
  * @author Patrick Jordan
  */
-public interface StrategicGame<T extends PayoffValue> extends Game {
-    /**
-     * Get the action set of a player in the game.
-     * @param player the player
-     * @return the action set of a player in the game and <code>null</code>
-     * otherwise.
-     */
-    Set<Action> getActions(Player player);
-
+public interface StrategicGame<T extends PayoffValue> extends StrategicSimulation {
+    
     /**
      * Get the payoff of the outcome.
      * @param outcome the outcome.

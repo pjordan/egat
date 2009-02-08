@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Payoff interface that provides a mapping between {@link Player game players}
+ * Payoff interface that provides a mapping between {@link Player simulation players}
  *  and their corresponding {@link Number value}.
  * {@link StrategicGame Strategic games} use this mapping to determine a
  * {@link Payoff payoff}.

@@ -6,19 +6,12 @@
  */
 package edu.umich.eecs.ai.egat.game;
 
-import java.util.Set;
-
 /**
- * SymmetricGame is a marker interface for a symmetric game.
+ * SymmetricGame is a marker interface for a symmetric simulation.
  *
  * @author Patrick Jordan
  */
-public interface SymmetricGame<T extends PayoffValue> extends StrategicGame<T> {
-    /**
-     * Get the action set of all players in the game.
-     * @return the action set of all players in the game.
-     */
-    Set<Action> getActions();
+public interface SymmetricGame<T extends PayoffValue> extends StrategicGame<T>, SymmetricSimulation {
 
     /**
      * Get the payoff of the outcome.

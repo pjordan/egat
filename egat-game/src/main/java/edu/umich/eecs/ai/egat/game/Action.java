@@ -7,7 +7,7 @@
 package edu.umich.eecs.ai.egat.game;
 
 /**
- * The action interface for a game.  The contract for {@link Action}
+ * The action interface for a simulation.  The contract for {@link Action}
  * requires that two actions are equal if {@link #getID()} returns
  * equal strings for both actions.
  *

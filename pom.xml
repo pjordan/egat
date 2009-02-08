@@ -60,6 +60,8 @@
    </developers>
   <modules>
     <module>egat-game</module>
+    <module>egat-egame</module>
     <module>egat-game-xml</module>
+	<module>egat-egame-xml</module>
   </modules>
 </project>

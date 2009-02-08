@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  * Profile interface that provides a mapping between
- * {@link Player game players} and their corresponding
+ * {@link Player simulation players} and their corresponding
  * {@link Strategy strategies}. {@link StrategicGame Strategic games}
  * use this mapping to determine
  * an expected {@link Payoff payoff}.

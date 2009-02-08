@@ -51,31 +51,31 @@ public final class Games {
 
 
     /**
-     * Create an outcome traversal object for a strategic game.
+     * Create an outcome traversal object for a strategic simulation.
      *
-     * @param game the strategic game
+     * @param simulation the strategic simulation
      * @return the outcome traversal
      */
-    public static OutcomeTraversal traversal(StrategicGame game) {
-        return new DefaultOutcomeTraversal(game);
+    public static OutcomeTraversal traversal(StrategicSimulation simulation) {
+        return new DefaultOutcomeTraversal(simulation);
     }
 
     /**
-     * Create an outcome traversal object for a symmetric game.
+     * Create an outcome traversal object for a symmetric simulation.
      * This implemenation will avoid repeated (symmetric) outcomes.
      *
-     * @param game the symmetric game.
+     * @param simulation the symmetric simulation.
      * @return the outcome traversal.
      */
-    public static SymmetricOutcomeTraversal symmetricTraversal(SymmetricGame game) {
-        return new SymmetricOutcomeTraversalImpl(game);
+    public static SymmetricOutcomeTraversal symmetricTraversal(SymmetricSimulation simulation) {
+        return new SymmetricOutcomeTraversalImpl(simulation);
     }
 
     static class DefaultOutcomeTraversal implements OutcomeTraversal {
-        StrategicGame game;
+        StrategicSimulation game;
 
-        public DefaultOutcomeTraversal(StrategicGame game) {
-            this.game = game;
+        public DefaultOutcomeTraversal(StrategicSimulation simulation) {
+            this.game = simulation;
         }
 
         public Iterator<Outcome> iterator() {
@@ -84,18 +84,18 @@ public final class Games {
 
 
         private static class IteratorImpl implements Iterator<Outcome> {
-            private StrategicGame game;
+            private StrategicSimulation simulation;
             private CrossProductIterator<Action> iterator;
             private List<Player> players;
 
-            public IteratorImpl(StrategicGame game) {
-                this.game = game;
+            public IteratorImpl(StrategicSimulation simulation) {
+                this.simulation = simulation;
 
                 List<Set<Action>> actions = new LinkedList<Set<Action>>();
                 players = new ArrayList<Player>();
-                for (Player p : game.players()) {
+                for (Player p : simulation.players()) {
                     players.add(p);
-                    actions.add(game.getActions(p));
+                    actions.add(simulation.getActions(p));
                 }
 
                 iterator = new CrossProductIterator<Action>(actions);
@@ -173,31 +173,31 @@ public final class Games {
     }
 
     static class SymmetricOutcomeTraversalImpl implements SymmetricOutcomeTraversal {
-        private SymmetricGame game;
+        private SymmetricSimulation simulation;
 
-        public SymmetricOutcomeTraversalImpl(SymmetricGame game) {
-            this.game = game;
+        public SymmetricOutcomeTraversalImpl(SymmetricSimulation simulation) {
+            this.simulation = simulation;
         }
 
         public Iterator<SymmetricOutcome> iterator() {
-            return new IteratorImpl(game);
+            return new IteratorImpl(simulation);
         }
 
         private static class IteratorImpl implements Iterator<SymmetricOutcome> {
-            private SymmetricGame game;
+            private SymmetricSimulation simulation;
             private SymmetryIterator<Action> iterator;
 
             private List<Player> players;
 
-            public IteratorImpl(SymmetricGame game) {
-                this.game = game;
+            public IteratorImpl(SymmetricSimulation simulation) {
+                this.simulation = simulation;
 
                 Set<Action> actions = new HashSet<Action>();
                 players = new ArrayList<Player>();
-                for (Player p : game.players()) {
+                for (Player p : simulation.players()) {
                     players.add(p);
                     if (actions != null) {
-                        actions = game.getActions(p);
+                        actions = simulation.getActions(p);
                     }
                 }
 

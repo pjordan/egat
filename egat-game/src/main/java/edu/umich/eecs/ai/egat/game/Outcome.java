@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  * Outcome interface that provides a mapping between
- * {@link Player game players} and their corresponding
+ * {@link Player simulation players} and their corresponding
  * {@link Action action}. {@link StrategicGame Strategic games}
  * use this mapping to determine
  * a {@link Payoff payoff}.

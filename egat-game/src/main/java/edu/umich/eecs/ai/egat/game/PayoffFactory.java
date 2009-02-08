@@ -99,9 +99,9 @@ public class PayoffFactory {
     }
 
     /**
-     * Calculate the minimum payoff of a game.  This is the minimum values over all outcomes and players.
+     * Calculate the minimum payoff of a simulation.  This is the minimum values over all outcomes and players.
      *
-     * @param game the game
+     * @param game the simulation
      * @return the minimum values over all outcomes and players.
      */
     public static Number minPayoff(final StrategicGame game) {
@@ -126,9 +126,9 @@ public class PayoffFactory {
     }
 
     /**
-     * Calculate the maximum payoff of a game.  This is the maximum values over all outcomes and players.
+     * Calculate the maximum payoff of a simulation.  This is the maximum values over all outcomes and players.
      *
-     * @param game the game
+     * @param game the simulation
      * @return the minimum values over all outcomes and players.
      */
     public static Number maxPayoff(final StrategicGame game) {
@@ -234,6 +234,11 @@ public class PayoffFactory {
 
         public Collection<T> values() {
             return map.values();
+        }
+
+
+        public Map<Action, T> valueMap() {
+            return actionMap;
         }
     }
 
