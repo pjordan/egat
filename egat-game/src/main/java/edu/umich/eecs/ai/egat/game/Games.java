@@ -304,8 +304,8 @@ public final class Games {
     /**
      * Create a deviation of an outcome.
      *
-     * @param player the player deviating
-     * @param action the action
+     * @param player  the player deviating
+     * @param action  the action
      * @param outcome the outcome being deviated
      * @return the outcome represented by the mapping between the players and actions.
      */
@@ -313,8 +313,8 @@ public final class Games {
         Player[] players = outcome.players().toArray(new Player[0]);
         Action[] actions = new Action[players.length];
 
-        for(int i = 0; i < players.length; i++) {
-            if(players[i].equals(player))
+        for (int i = 0; i < players.length; i++) {
+            if (players[i].equals(player))
                 actions[i] = action;
             else
                 actions[i] = outcome.getAction(players[i]);
@@ -330,7 +330,7 @@ public final class Games {
      * @return the outcome represented by the mapping between the players and actions.
      */
     public static SymmetricOutcome createSymmetricOutcome(Outcome outcome) {
-        return (outcome instanceof SymmetricOutcome) ? (SymmetricOutcome)outcome : new SymmetricOutcomeImpl(outcome);
+        return (outcome instanceof SymmetricOutcome) ? (SymmetricOutcome) outcome : new SymmetricOutcomeImpl(outcome);
     }
 
     /**
@@ -341,8 +341,9 @@ public final class Games {
      * @return the outcome represented by the mapping between the players and actions.
      */
     public static SymmetricOutcome createSymmetricOutcome(final Player[] players, final Action[] actions) {
-        return createSymmetricOutcome(createOutcome(players,actions));
+        return createSymmetricOutcome(createOutcome(players, actions));
     }
+
     /**
      * Create a strategy by wrapping the actions and probabilities arrays.
      *
@@ -357,12 +358,12 @@ public final class Games {
     /**
      * Create a profile by wrapping the players and strategies arrays.
      *
-     * @param players      the array of players in the profile.
+     * @param players    the array of players in the profile.
      * @param strategies the array of strategies in the profile.
      * @return the profile represented by the mapping between the players and values.
      */
     public static Profile createProfile(final Player[] players, final Strategy[] strategies) {
-        return new ProfileImpl(players,strategies);
+        return new ProfileImpl(players, strategies);
     }
 
     static class ProfileImpl extends UnmodifiableReducedMapImpl<Player, Strategy> implements Profile {
@@ -400,20 +401,20 @@ public final class Games {
 
     static class SymmetricOutcomeImpl implements SymmetricOutcome {
         private Outcome outcome;
-        private Map<Action,Integer> counts;
+        private Map<Action, Integer> counts;
 
         public SymmetricOutcomeImpl(Outcome outcome) {
             this.outcome = outcome;
-            counts = new HashMap<Action,Integer>();
+            counts = new HashMap<Action, Integer>();
 
-            for(Player player : outcome.players()) {
+            for (Player player : outcome.players()) {
                 Action a = outcome.getAction(player);
 
-                if(!counts.containsKey(a)) {
-                    counts.put(a,new Integer(0));
+                if (!counts.containsKey(a)) {
+                    counts.put(a, new Integer(0));
                 }
 
-                counts.put(a,counts.get(a)+1);
+                counts.put(a, counts.get(a) + 1);
             }
         }
 
@@ -444,7 +445,7 @@ public final class Games {
 
         public Integer getCount(Action action) {
             Integer count = counts.get(action);
-            return count==null ? new Integer(0) : count;
+            return count == null ? new Integer(0) : count;
         }
 
         public Set<Map.Entry<Action, Integer>> actionEntrySet() {
@@ -452,7 +453,7 @@ public final class Games {
         }
 
         public boolean symmetricEquals(SymmetricOutcome outcome) {
-            if(outcome==null)
+            if (outcome == null)
                 return false;
 
             return actionEntrySet().equals(outcome.actionEntrySet());
@@ -475,7 +476,7 @@ public final class Games {
 
         public boolean equals(Object object) {
             super.equals(object);
-            
+
             if (!(object instanceof Outcome)) {
                 return false;
             }
@@ -504,7 +505,7 @@ public final class Games {
         }
 
         public Number getProbability(Action action) {
-            return get(action)==null ? 0.0 : get(action).doubleValue();
+            return get(action) == null ? 0.0 : get(action).doubleValue();
         }
 
         public boolean equals(Object object) {
@@ -554,7 +555,7 @@ public final class Games {
         public boolean equals(Object object) {
             if (!(object instanceof UnmodifiableReducedMapImpl))
                 return false;
-            if (hashCode!=object.hashCode())
+            if (hashCode != object.hashCode())
                 return false;
             return entrySet().equals(((UnmodifiableReducedMapImpl) object).entrySet());
         }
@@ -607,35 +608,35 @@ public final class Games {
         Collection<Action> toActions = to.actions();
         Collection<Action> fromActions = from.actions();
 
-        for(Action action : toActions) {
-            if(a==null)
+        for (Action action : toActions) {
+            if (a == null)
                 a = action;
 
-            if(to.getCount(action)>from.getCount(action)) {
+            if (to.getCount(action) > from.getCount(action)) {
                 a = action;
                 break;
             }
         }
 
-        for(Action action : fromActions) {
-            if(b==null)
+        for (Action action : fromActions) {
+            if (b == null)
                 b = action;
-            if(to.getCount(action)<from.getCount(action)) {
+            if (to.getCount(action) < from.getCount(action)) {
                 b = action;
                 break;
             }
         }
 
-        for(Player p : to.players()) {
-            if(to.getAction(p)==a) {
+        for (Player p : to.players()) {
+            if (to.getAction(p) == a) {
                 players[0] = p;
                 break;
             }
 
         }
 
-        for(Player p : from.players()) {
-            if(from.getAction(p)==b) {
+        for (Player p : from.players()) {
+            if (from.getAction(p) == b) {
                 players[1] = p;
                 break;
             }
@@ -649,14 +650,99 @@ public final class Games {
         return to.getPayoff(p[0]).getValue() - from.getPayoff(p[1]).getValue();
     }
 
+    public static double robustRegret(Action action, SymmetricGame game) {
+        double epsilon = 0.0;
+
+        Set<Action> otherActions = new HashSet<Action>(game.getActions());
+        otherActions.remove(action);
+
+        for (SymmetricOutcome outcome : Games.symmetricTraversal(game)) {
+            if(outcome.getCount(action) > 0) {
+                Player[] players = outcome.players().toArray(new Player[0]);
+                Action[] actions = new Action[players.length];
+
+                int index = -1;
+
+                for(int i = 0; i < players.length; i++) {
+                    actions[i] = outcome.getAction(players[i]);
+
+                    if(action.equals(actions[i])) {
+                        index = i;
+                    }
+                }
+
+
+                double outcomePayoff = game.payoff(outcome).getPayoff(action).getValue();
+
+                for(Action other : otherActions) {
+                    actions[index] = other;
+                    SymmetricOutcome deviation = Games.createSymmetricOutcome(players,actions);
+
+                    double otherPayoff = game.payoff(deviation).getPayoff(other).getValue();
+                    epsilon = Math.max(epsilon, otherPayoff - outcomePayoff);
+                }
+            }                                    
+        }
+
+        return epsilon;
+    }
+
+    public static double robustRegret(Player player, Action action, StrategicGame game) {
+        double epsilon = 0.0;
+
+        Set<Action> otherActions = new HashSet<Action>(game.getActions(player));
+        otherActions.remove(action);
+
+        for (Outcome outcome : Games.traversal(game)) {
+            if(action.equals(outcome.getAction(player))) {
+                Player[] players = outcome.players().toArray(new Player[0]);
+                Action[] actions = new Action[players.length];
+
+                int index = -1;
+
+                for(int i = 0; i < players.length; i++) {
+                    actions[i] = outcome.getAction(players[i]);
+
+                    if(player.equals(players[i])) {
+                        index = i;
+                    }
+                }
+
+
+                double outcomePayoff = game.payoff(outcome).getPayoff(player).getValue();
+
+                for(Action other : otherActions) {
+                    actions[index] = other;
+                    Outcome deviation = Games.createOutcome(players,actions);
+
+                    double otherPayoff = game.payoff(deviation).getPayoff(player).getValue();
+                    epsilon = Math.max(epsilon, otherPayoff - outcomePayoff);
+                }
+            }
+        }
+
+        return epsilon;
+    }
+
     public static double regret(SymmetricOutcome outcome, SymmetricGame game) {
         double epsilon = 0.0;
 
-        for (SymmetricOutcome deviation : DeviationFactory.deviationTraversal(outcome,game)) {
+        for (SymmetricOutcome deviation : DeviationFactory.deviationTraversal(outcome, game)) {
             Player[] players = findDeviatingPlayers(deviation, outcome);
-            epsilon = Math.max(epsilon, deviationGain(game.payoff(outcome),game.payoff(deviation),players));
+            epsilon = Math.max(epsilon, deviationGain(game.payoff(outcome), game.payoff(deviation), players));
         }
-        
+
+        return epsilon;
+    }
+
+    public static double regret(Outcome outcome, StrategicGame game) {
+        double epsilon = 0.0;
+
+        for (Player player : game.players()) {
+            for (Outcome deviation : DeviationFactory.deviationTraversal(outcome, game, player)) {
+                epsilon = Math.max(epsilon, deviationGain(game.payoff(outcome), game.payoff(deviation), player));
+            }
+        }
         return epsilon;
     }
 }

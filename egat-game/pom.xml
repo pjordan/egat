@@ -2,20 +2,14 @@
     <parent>
         <groupId>edu.umich.eecs.ai.egat</groupId>
         <artifactId>egat</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>egat-game</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.9-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>EGAT Game</name>
     <description>Empirical Game Analysis Toolkit Game Interfaces</description>
-    <url>http://www.eecs.umich.edu/egat</url>
-    <inceptionYear>2003</inceptionYear>
-    <organization>
-        <name>Regents of the University of Michigan</name>
-        <url>http://www.umich.edu/~regents/</url>
-    </organization>
     <dependencies>
       <dependency>
         <groupId>junit</groupId>
