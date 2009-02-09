@@ -2,11 +2,9 @@ package edu.umich.eecs.ai.egat.cli.replicatordynamics;
 
 import edu.umich.eecs.ai.egat.cli.AbstractGameCommandHandler;
 import edu.umich.eecs.ai.egat.cli.CommandProcessingException;
-import edu.umich.eecs.ai.egat.game.DefaultSymmetricGame;
-import edu.umich.eecs.ai.egat.game.DefaultStrategicGame;
-import edu.umich.eecs.ai.egat.game.SymmetricReplicatorDynamics;
-import edu.umich.eecs.ai.egat.game.Strategy;
+import edu.umich.eecs.ai.egat.game.*;
 import edu.umich.eecs.ai.egat.gamexml.StrategyWriter;
+import edu.umich.eecs.ai.egat.gamexml.ProfileWriter;
 import org.apache.commons.cli2.Option;
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.builder.GroupBuilder;
@@ -16,6 +14,7 @@ import org.apache.commons.cli2.builder.CommandBuilder;
 
 import java.io.PrintStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author Patrick Jordan
@@ -83,9 +82,13 @@ public class ReplicatorDynamicsCommandHandler extends AbstractGameCommandHandler
 
         Strategy strategy = symmetricReplicatorDynamics.run(game, null);
 
-        StrategyWriter writer = new StrategyWriter(System.out);
+        Player[] players = game.players().toArray(new Player[0]);
+        Strategy[] strategies = new Strategy[players.length];
+        Arrays.fill(strategies, strategy);
+
+        ProfileWriter writer = new ProfileWriter(System.out);
         try {
-            writer.write(strategy);
+            writer.write(Games.createProfile(players,strategies));
         } catch (IOException e) {
             throw new CommandProcessingException(e);
         }

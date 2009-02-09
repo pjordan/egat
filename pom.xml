@@ -28,4 +28,10 @@
 	<module>egat-egame-xml</module>
 	<module>egat-cli</module>
   </modules>
+  <repositories>
+    <repository>
+      <id>egat-repository</id>
+      <url>http://www.eecs.umich.edu/~prjordan/egat/repository</url>
+	</repository>
+  </repositories>
 </project>
