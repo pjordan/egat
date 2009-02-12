@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <nfg name="TEST" description="TEST">
-    <players>
-        <player id="alice"/>
-        <player id="bob"/>
-    </players>
-    <actions>
-        <action id="c"/>
-        <action id="d"/>
-    </actions>
+        <players>
+            <player id="alice"/>
+            <player id="bob"/>
+        </players>
+        <actions>
+            <action id="c"/>
+            <action id="d"/>
+        </actions>
     <payoffs>
         <payoff>
             <outcome action="c" count="2" value="3.0"/>

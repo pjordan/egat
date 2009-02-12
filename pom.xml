@@ -27,6 +27,7 @@
     <module>egat-game-xml</module>
 	<module>egat-egame-xml</module>
 	<module>egat-cli</module>
+	<module>min-curb</module>
   </modules>
   <repositories>
     <repository>

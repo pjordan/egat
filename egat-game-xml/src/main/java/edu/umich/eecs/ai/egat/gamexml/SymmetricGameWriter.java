@@ -11,16 +11,30 @@ import java.util.Map;
 public class SymmetricGameWriter extends Writer {
     private PrintWriter writer;
 
+    private boolean header;
+
     public SymmetricGameWriter(PrintWriter writer) {
-        this.writer = writer;
+        this(writer,true);
     }
 
     public SymmetricGameWriter(Writer writer) {
         this(new PrintWriter(writer));
     }
 
+    public SymmetricGameWriter(Writer writer, boolean header) {
+        this(new PrintWriter(writer), header);
+    }
     public SymmetricGameWriter(OutputStream outputStream) {
         this(new OutputStreamWriter(outputStream));
+    }
+
+    public SymmetricGameWriter(OutputStream outputStream, boolean header) {
+        this(new OutputStreamWriter(outputStream), header);
+    }
+
+    public SymmetricGameWriter(PrintWriter writer, boolean header) {
+        this.writer = writer;
+        this.header = header;
     }
 
     public void write(char[] cbuf, int off, int len) throws IOException {
@@ -37,7 +51,9 @@ public class SymmetricGameWriter extends Writer {
 
     public SymmetricGameWriter write(SymmetricGame game) throws IOException {
 
-        writer.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        if(header) {
+            writer.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        }
         writer.print(String.format("<nfg name=\"%s\" description=\"%s\">", game.getName(), game.getDescription()));
 
         writer.print("<players>");

@@ -5,11 +5,11 @@
         <version>0.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>egat-cli</artifactId>
+    <artifactId>min-curb</artifactId>
     <version>0.9-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>EGAT command line interface</name>
-    <description>Empirical Game Analysis Toolkit command line interface</description>
+    <name>Minimum CURB Set Package</name>
+    <description>Empirical Game Analysis Toolkit Minimum CURB Set package</description>
     <dependencies>
         <dependency>
             <groupId>edu.umich.eecs.ai.egat</groupId>
@@ -18,28 +18,20 @@
         </dependency>
         <dependency>
             <groupId>edu.umich.eecs.ai.egat</groupId>
-            <artifactId>egat-egame</artifactId>
-            <version>0.9-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>edu.umich.eecs.ai.egat</groupId>
             <artifactId>egat-game-xml</artifactId>
             <version>0.9-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>edu.umich.eecs.ai.egat</groupId>
-            <artifactId>egat-egame-xml</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>edu.umich.eecs.ai.egat</groupId>
-            <artifactId>min-curb</artifactId>
-            <version>0.9-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-cli</artifactId>
-            <version>2.0-SNAPSHOT</version>
+            <groupId>lpsolve</groupId>
+            <artifactId>lpsolve</artifactId>
+            <version>5.5.0</version>
         </dependency>
     </dependencies>
     <developers>
@@ -56,6 +48,14 @@
             <timezone>-5</timezone>
         </developer>
     </developers>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
     <build>
         <plugins>
             <plugin>
@@ -64,17 +64,6 @@
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/main/assembly/dep.xml</descriptor>
-                    </descriptors>
-                    <finalName>egat-${version}</finalName>
-                    <outputDirectory>target/</outputDirectory>
-                    <workDirectory>target/assembly/work></workDirectory>
                 </configuration>
             </plugin>
         </plugins>

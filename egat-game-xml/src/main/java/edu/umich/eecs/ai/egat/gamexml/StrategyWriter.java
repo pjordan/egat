@@ -12,16 +12,31 @@ import java.util.Map;
 public class StrategyWriter extends Writer {
     private PrintWriter writer;
 
+    private boolean header;
+
     public StrategyWriter(PrintWriter writer) {
-        this.writer = writer;
+        this(writer, true);
     }
 
     public StrategyWriter(Writer writer) {
         this(new PrintWriter(writer));
     }
 
+    public StrategyWriter(Writer writer, boolean header) {
+        this(new PrintWriter(writer), header);
+    }
+
     public StrategyWriter(OutputStream outputStream) {
         this(new OutputStreamWriter(outputStream));
+    }
+
+    public StrategyWriter(OutputStream outputStream, boolean header) {
+        this(new OutputStreamWriter(outputStream), header);
+    }
+
+    public StrategyWriter(PrintWriter writer, boolean header) {
+        this.writer = writer;
+        this.header = header;
     }
 
     public void write(char[] cbuf, int off, int len) throws IOException {
@@ -38,7 +53,9 @@ public class StrategyWriter extends Writer {
 
     public StrategyWriter write(Strategy strategy) throws IOException {
 
-        writer.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        if(header) {
+            writer.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        }
         writer.print("<strategy>");
 
 

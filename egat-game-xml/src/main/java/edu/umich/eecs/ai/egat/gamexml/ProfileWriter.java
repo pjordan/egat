@@ -14,8 +14,10 @@ import java.util.Map;
 public class ProfileWriter extends Writer {
     private PrintWriter writer;
 
+    private boolean header;
+
     public ProfileWriter(PrintWriter writer) {
-        this.writer = writer;
+        this(writer, true);
     }
 
     public ProfileWriter(Writer writer) {
@@ -24,6 +26,11 @@ public class ProfileWriter extends Writer {
 
     public ProfileWriter(OutputStream outputStream) {
         this(new OutputStreamWriter(outputStream));
+    }
+
+    public ProfileWriter(PrintWriter writer, boolean header) {
+        this.writer = writer;
+        this.header = header;
     }
 
     public void write(char[] cbuf, int off, int len) throws IOException {
@@ -40,7 +47,10 @@ public class ProfileWriter extends Writer {
 
     public ProfileWriter write(Profile profile) throws IOException {
 
-        writer.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        if(header) {
+            writer.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        }
+        
         writer.print("<profile>");
 
         for(Map.Entry<Player, Strategy> profileEntry : profile.entrySet()) {
