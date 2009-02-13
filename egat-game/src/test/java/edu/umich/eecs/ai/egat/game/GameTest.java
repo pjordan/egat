@@ -9,7 +9,7 @@ public class GameTest extends TestCase {
     private Player player1;
     private Player player2;
     private Player player3;
-    private DefaultGame game;
+    private MutableGame game;
 
     protected void setUp() throws Exception {
         player1 = Games.createPlayer("row");
@@ -32,7 +32,7 @@ public class GameTest extends TestCase {
     }
 
     public void testAddPlayers() {
-        DefaultGame emptyGame = new DefaultGame("name","description");
+        MutableGame emptyGame = new DefaultGame("name","description");
 
         assertEquals(emptyGame.players().size(),0);
 
@@ -50,7 +50,7 @@ public class GameTest extends TestCase {
     }
 
     public void testRemovePlayers() {
-        DefaultGame emptyGame = new DefaultGame("name","description");
+        MutableGame emptyGame = new DefaultGame("name","description");
 
         assertEquals(emptyGame.players().size(),0);
 

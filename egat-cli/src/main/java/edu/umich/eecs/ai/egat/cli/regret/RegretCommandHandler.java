@@ -15,14 +15,14 @@ public class RegretCommandHandler extends AbstractGameCommandHandler {
         return "regret";
     }
 
-    protected void processSymmetricGame(DefaultSymmetricGame game) throws CommandProcessingException {
+    protected void processSymmetricGame(MutableSymmetricGame game) throws CommandProcessingException {
         SymmetricRegretWriter writer = new SymmetricRegretWriter(System.out);
 
         writer.writeRegret(game);
 
     }
 
-    protected void processStrategicGame(DefaultStrategicGame game) throws CommandProcessingException {
+    protected void processStrategicGame(MutableStrategicGame game) throws CommandProcessingException {
         StrategicRegretWriter writer = new StrategicRegretWriter(System.out);
 
         writer.writeRegret(game);

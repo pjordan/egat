@@ -2,10 +2,9 @@ package edu.umich.eecs.ai.egat.cli.mincurb;
 
 import edu.umich.eecs.ai.egat.cli.AbstractGameCommandHandler;
 import edu.umich.eecs.ai.egat.cli.CommandProcessingException;
-import edu.umich.eecs.ai.egat.cli.regret.SymmetricRegretWriter;
-import edu.umich.eecs.ai.egat.game.DefaultSymmetricGame;
-import edu.umich.eecs.ai.egat.game.DefaultStrategicGame;
 import edu.umich.eecs.ai.egat.game.SymmetricGame;
+import edu.umich.eecs.ai.egat.game.MutableStrategicGame;
+import edu.umich.eecs.ai.egat.game.MutableSymmetricGame;
 import edu.umich.eecs.ai.egat.mincurb.BenischMinimumCurbFinder;
 import edu.umich.eecs.ai.egat.gamexml.SymmetricGameWriter;
 import org.apache.commons.cli2.builder.CommandBuilder;
@@ -43,7 +42,7 @@ public class MinCurbCommandHandler extends AbstractGameCommandHandler {
         return "min-curb";
     }
 
-    protected void processSymmetricGame(DefaultSymmetricGame game) throws CommandProcessingException {
+    protected void processSymmetricGame(MutableSymmetricGame game) throws CommandProcessingException {
         SymmetricGameWriter writer = new SymmetricGameWriter(System.out, !all);
 
         BenischMinimumCurbFinder finder = new BenischMinimumCurbFinder();
@@ -65,7 +64,7 @@ public class MinCurbCommandHandler extends AbstractGameCommandHandler {
 
     }
 
-    protected void processStrategicGame(DefaultStrategicGame game) throws CommandProcessingException {
+    protected void processStrategicGame(MutableStrategicGame game) throws CommandProcessingException {
         throw new UnsupportedOperationException("min-curb requires a symmetric game");
     }
 

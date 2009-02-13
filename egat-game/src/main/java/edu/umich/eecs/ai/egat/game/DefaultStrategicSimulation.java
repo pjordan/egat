@@ -7,7 +7,7 @@ import java.util.HashMap;
 /**
  * @author Patrick Jordan
  */
-public class DefaultStrategicSimulation extends DefaultGame implements StrategicSimulation {
+public class DefaultStrategicSimulation extends DefaultGame implements MutableStrategicSimulation {
     protected Map<Player, Set<Action>> playerActions;
 
     public DefaultStrategicSimulation() {
@@ -40,5 +40,13 @@ public class DefaultStrategicSimulation extends DefaultGame implements Strategic
 
     public Set<Action> getActions(Player player) {
         return playerActions.get(player);
+    }
+
+    public void removeAction(Player player, Action action) {
+        playerActions.get(player).remove(action);
+    }
+
+    public void addAction(Player player, Action action) {
+        playerActions.get(player).add(action);
     }
 }

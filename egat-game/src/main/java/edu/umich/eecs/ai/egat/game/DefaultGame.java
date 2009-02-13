@@ -7,7 +7,7 @@ import java.util.Collections;
 /**
  * @author Patrick Jordan
  */
-public class DefaultGame implements Game {
+public class DefaultGame implements MutableGame {
     private String name;
     private String description;
     private Set<Player> players;

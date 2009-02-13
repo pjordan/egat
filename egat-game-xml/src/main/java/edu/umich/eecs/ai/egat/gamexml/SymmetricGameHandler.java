@@ -145,7 +145,7 @@ public class SymmetricGameHandler extends DefaultHandler {
 
     }
 
-    public DefaultSymmetricGame<PayoffValue> getGame() {
+    public MutableSymmetricGame<PayoffValue> getGame() {
         return game;
     }
 }

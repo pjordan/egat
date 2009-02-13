@@ -6,8 +6,6 @@ import edu.umich.eecs.ai.egat.game.*;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Patrick Jordan
@@ -50,7 +48,7 @@ public class EquivalentStrategySymmetricRegressionFactoryTest {
 
 
     protected SymmetricSimulation createTestSimulation(Player[] players, Action[] actions) {
-        DefaultSymmetricSimulation sim = new DefaultSymmetricSimulation("test","testRegression");
+        MutableSymmetricSimulation sim = new DefaultSymmetricSimulation("test","testRegression");
 
         for(Player p : players) {
             sim.addPlayer(p);

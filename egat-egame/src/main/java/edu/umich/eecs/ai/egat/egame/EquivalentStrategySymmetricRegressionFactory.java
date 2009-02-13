@@ -4,7 +4,6 @@ import edu.umich.eecs.ai.egat.game.*;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
 import java.util.HashSet;
 
 /**
@@ -21,7 +20,7 @@ public class EquivalentStrategySymmetricRegressionFactory implements SymmetricRe
 
     public SymmetricRegression regress(SymmetricSimulationObserver observer) {
         SymmetricSimulation simulation = observer.getSymmetricSimulation();
-        DefaultSymmetricSimulation reducedSimulation = new DefaultSymmetricSimulation(simulation.getName(), simulation.getDescription());
+        MutableSymmetricSimulation reducedSimulation = new DefaultSymmetricSimulation(simulation.getName(), simulation.getDescription());
 
         for (Player p : simulation.players()) {
             reducedSimulation.addPlayer(p);

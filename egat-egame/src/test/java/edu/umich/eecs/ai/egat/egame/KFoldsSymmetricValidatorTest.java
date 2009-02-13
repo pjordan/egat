@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.Assert;
 import edu.umich.eecs.ai.egat.game.*;
 
-import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
@@ -60,7 +59,7 @@ public class KFoldsSymmetricValidatorTest {
     }
 
     protected SymmetricSimulation createSimulation(Player[] players, Action[] actions) {
-        DefaultSymmetricSimulation sim = new DefaultSymmetricSimulation("test", "testEmptyObservationCount");
+        MutableSymmetricSimulation sim = new DefaultSymmetricSimulation("test", "testEmptyObservationCount");
 
         for (Player p : players) {
             sim.addPlayer(p);

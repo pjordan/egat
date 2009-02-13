@@ -1,14 +1,10 @@
 package edu.umich.eecs.ai.egat.cli;
 
 import edu.umich.eecs.ai.egat.cli.CommandProcessingException;
-import edu.umich.eecs.ai.egat.game.DefaultStrategicGame;
-import edu.umich.eecs.ai.egat.game.DefaultSymmetricGame;
-import edu.umich.eecs.ai.egat.game.SymmetricGame;
-import edu.umich.eecs.ai.egat.game.StrategicGame;
+import edu.umich.eecs.ai.egat.game.*;
 import edu.umich.eecs.ai.egat.gamexml.SymmetricGameHandler;
 import edu.umich.eecs.ai.egat.gamexml.StrategicGameHandler;
 import org.apache.commons.cli2.builder.ArgumentBuilder;
-import org.apache.commons.cli2.builder.CommandBuilder;
 import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 import org.apache.commons.cli2.builder.GroupBuilder;
 import org.apache.commons.cli2.DisplaySetting;
@@ -170,7 +166,7 @@ public abstract class AbstractGameCommandHandler extends AbstractCommandHandler 
 
                 parser.parse(inputStream, handler);
 
-                DefaultSymmetricGame game = handler.getGame();
+                MutableSymmetricGame game = handler.getGame();
 
                 processSymmetricGame(game);
             } else {
@@ -183,7 +179,7 @@ public abstract class AbstractGameCommandHandler extends AbstractCommandHandler 
 
                 parser.parse(inputStream, handler);
 
-                DefaultStrategicGame game = handler.getGame();
+                MutableStrategicGame game = handler.getGame();
 
                 processStrategicGame(game);
     
@@ -198,7 +194,7 @@ public abstract class AbstractGameCommandHandler extends AbstractCommandHandler 
 
     }
 
-    protected abstract void processSymmetricGame(DefaultSymmetricGame game) throws CommandProcessingException;
+    protected abstract void processSymmetricGame(MutableSymmetricGame game) throws CommandProcessingException;
 
-    protected abstract void processStrategicGame(DefaultStrategicGame game) throws CommandProcessingException;
+    protected abstract void processStrategicGame(MutableStrategicGame game) throws CommandProcessingException;
 }

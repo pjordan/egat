@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * @author Patrick Jordan
  */
-public class DefaultSymmetricGame<T extends PayoffValue> extends AbstractStrategicGame<T> implements SymmetricGame<T> {
+public class DefaultSymmetricGame<T extends PayoffValue> extends AbstractStrategicGame<T> implements MutableSymmetricGame<T> {
     private Set<Action> actions;
     private Map<Object, Map<Action,T>> outcomePayoffs;
 

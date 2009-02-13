@@ -8,7 +8,7 @@ import java.util.Collection;
 /**
  * @author Patrick Jordan
  */
-public class DefaultSymmetricSimulation extends DefaultGame implements SymmetricSimulation {
+public class DefaultSymmetricSimulation extends DefaultGame implements MutableSymmetricSimulation {
     private Set<Action> actions;
 
 

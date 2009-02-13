@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * @author Patrick Jordan
  */
-public class DefaultStrategicGame<T extends PayoffValue> extends AbstractStrategicGame<T> {
+public class DefaultStrategicGame<T extends PayoffValue> extends AbstractStrategicGame<T> implements MutableStrategicGame<T> {
     private DefaultOutcomeMap<Payoff<T>> outcomeMap;
     private Map<Player, Set<Action>> playerActions;
 
@@ -48,5 +48,9 @@ public class DefaultStrategicGame<T extends PayoffValue> extends AbstractStrateg
 
     public void removeAction(Player player, Action action) {
         playerActions.get(player).remove(action);
+    }
+
+    public void addAction(Player player, Action action) {
+        playerActions.get(player).add(action);
     }
 }

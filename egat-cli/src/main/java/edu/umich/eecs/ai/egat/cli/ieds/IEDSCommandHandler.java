@@ -5,6 +5,7 @@ import edu.umich.eecs.ai.egat.cli.AbstractGameCommandHandler;
 import edu.umich.eecs.ai.egat.gamexml.SymmetricGameWriter;
 import edu.umich.eecs.ai.egat.gamexml.StrategicGameWriter;
 import edu.umich.eecs.ai.egat.game.*;
+import edu.umich.eecs.ai.egat.dominance.*;
 import org.apache.commons.cli2.Option;
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.builder.DefaultOptionBuilder;
@@ -18,41 +19,39 @@ import java.io.PrintStream;
  * @author Patrick Jordan
  */
 public class IEDSCommandHandler extends AbstractGameCommandHandler {
-    private Option verboseOption;
+    private Option pureOption;
 
-    private boolean verbose;
+    private boolean pure;
 
     @Override
     protected void addAdditionalChildOptions(GroupBuilder groupBuilder) {
         final DefaultOptionBuilder defaultOptionBuilder = new DefaultOptionBuilder();
 
-        verboseOption = defaultOptionBuilder.withShortName("v")
-                                            .withLongName("verbose")
-                                            .withDescription("print algorithm details").create();
+        pureOption = defaultOptionBuilder.withShortName("p")
+                                         .withLongName("pure")
+                                         .withDescription("pure stategy dominance").create();
 
-        groupBuilder.withOption(verboseOption);
+        groupBuilder.withOption(pureOption);
     }
 
 
     @Override
     protected void handleAdditionalChildOptions(CommandLine commandLine) throws CommandProcessingException {
-        verbose = commandLine.hasOption(verboseOption);
+        pure = commandLine.hasOption(pureOption);
     }
 
     protected String getCommandName() {
         return "ieds";
     }
 
-    protected void processSymmetricGame(DefaultSymmetricGame game) throws CommandProcessingException {
-        PrintStream stream = null;
+    protected void processSymmetricGame(MutableSymmetricGame game) throws CommandProcessingException {
 
-        if (verbose) {
-            stream = System.err;
-        }
+        SymmetricDominanceTester dominanceTester = pure ? new PureSymmetricDominanceTesterImpl() : new MixedSymmetricDominanceTesterImpl();
 
-        SymmetricIteratedDominatedStrategyRemover remover = new SymmetricIteratedDominatedStrategyRemover(stream);
+        SymmetricIteratedDominatedStrategiesEliminator eliminator =
+                new SymmetricIteratedDominatedStrategiesEliminatorImpl(dominanceTester);
 
-        remover.removeDominatedStrategies(game);
+        eliminator.eliminateDominatedStrategies(game);
 
         SymmetricGameWriter writer = new SymmetricGameWriter(System.out);
 
@@ -64,16 +63,15 @@ public class IEDSCommandHandler extends AbstractGameCommandHandler {
 
     }
 
-    protected void processStrategicGame(DefaultStrategicGame game) throws CommandProcessingException {
-        PrintStream stream = null;
+    protected void processStrategicGame(MutableStrategicGame game) throws CommandProcessingException {
 
-        if (verbose) {
-            stream = System.err;
-        }
 
-        IteratedDominatedStrategyRemover remover = new IteratedDominatedStrategyRemover(stream);
+        StrategicDominanceTester dominanceTester = pure ? new PureStrategicDominanceTesterImpl() : new MixedStrategicDominanceTesterImpl();
 
-        remover.removeDominatedStrategies(game);
+        StrategicIteratedDominatedStrategiesEliminator eliminator =
+                new StrategicIteratedDominatedStrategiesEliminatorImpl(dominanceTester);
+
+        eliminator.eliminateDominatedStrategies(game);
 
         StrategicGameWriter writer = new StrategicGameWriter(System.out);
 

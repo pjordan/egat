@@ -66,7 +66,7 @@ public class KFoldsStrategicValidatorTest {
     }
 
     protected StrategicSimulation createSimulation(Player[] players, Action[][] actions) {
-        DefaultStrategicSimulation sim = new DefaultStrategicSimulation("test","testEmptyObservationCount");
+        MutableStrategicSimulation sim = new DefaultStrategicSimulation("test","testEmptyObservationCount");
 
         for(int p = 0; p < players.length; p++) {
             sim.addPlayer(players[p]);

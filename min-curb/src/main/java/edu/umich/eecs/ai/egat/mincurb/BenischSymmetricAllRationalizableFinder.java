@@ -13,7 +13,7 @@ import lpsolve.LpSolveException;
 public class BenischSymmetricAllRationalizableFinder implements SymmetricAllRationalizableFinder {
 
     public Set<Action> findRationalizable(Set<Action> actions, SymmetricGame game) {
-        DefaultSymmetricSimulation subGame = new DefaultSymmetricSimulation();
+        MutableSymmetricSimulation subGame = new DefaultSymmetricSimulation();
         Set<Action> others = new HashSet<Action>(game.getActions());
 
         Player[] allPlayers = game.players().toArray(new Player[0]);

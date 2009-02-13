@@ -82,7 +82,7 @@ public class StrategyRegretCommandHandler extends AbstractGameCommandHandler {
         return "strategy-regret";
     }
 
-    protected void processSymmetricGame(DefaultSymmetricGame game) throws CommandProcessingException {
+    protected void processSymmetricGame(MutableSymmetricGame game) throws CommandProcessingException {
 
         try {
             Profile profile = null;
@@ -128,7 +128,7 @@ public class StrategyRegretCommandHandler extends AbstractGameCommandHandler {
         }
     }
 
-    protected void processStrategicGame(DefaultStrategicGame game) throws CommandProcessingException {
+    protected void processStrategicGame(MutableStrategicGame game) throws CommandProcessingException {
         try {
             Profile profile = null;
 

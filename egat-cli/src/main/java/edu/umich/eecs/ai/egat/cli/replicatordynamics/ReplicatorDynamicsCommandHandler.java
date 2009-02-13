@@ -3,7 +3,6 @@ package edu.umich.eecs.ai.egat.cli.replicatordynamics;
 import edu.umich.eecs.ai.egat.cli.AbstractGameCommandHandler;
 import edu.umich.eecs.ai.egat.cli.CommandProcessingException;
 import edu.umich.eecs.ai.egat.game.*;
-import edu.umich.eecs.ai.egat.gamexml.StrategyWriter;
 import edu.umich.eecs.ai.egat.gamexml.ProfileWriter;
 import org.apache.commons.cli2.Option;
 import org.apache.commons.cli2.CommandLine;
@@ -70,7 +69,7 @@ public class ReplicatorDynamicsCommandHandler extends AbstractGameCommandHandler
         maxIteration = Integer.parseInt(commandLine.getValue(maxIterationOption).toString());
     }
 
-    protected void processSymmetricGame(DefaultSymmetricGame game) throws CommandProcessingException {
+    protected void processSymmetricGame(MutableSymmetricGame game) throws CommandProcessingException {
         PrintStream printStream = null;
 
         if(verbose) {
@@ -94,7 +93,7 @@ public class ReplicatorDynamicsCommandHandler extends AbstractGameCommandHandler
         }
     }
 
-    protected void processStrategicGame(DefaultStrategicGame game) throws CommandProcessingException {
+    protected void processStrategicGame(MutableStrategicGame game) throws CommandProcessingException {
         throw new UnsupportedOperationException("replicator dynamics requires a symmetric game");
     }
 

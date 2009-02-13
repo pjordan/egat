@@ -21,7 +21,7 @@ public class BasicStatsStrategicSimulationObserverTest {
                                               Games.createAction("b")}};
         double[] values = new double[] {0.0, 1.0};
 
-        DefaultStrategicSimulation sim = new DefaultStrategicSimulation("test","testEmptyObservationCount");
+        MutableStrategicSimulation sim = new DefaultStrategicSimulation("test","testEmptyObservationCount");
 
         for(int p = 0; p < players.length; p++) {
             sim.addPlayer(players[p]);

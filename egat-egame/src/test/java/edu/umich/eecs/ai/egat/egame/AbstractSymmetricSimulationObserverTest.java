@@ -33,7 +33,7 @@ public class AbstractSymmetricSimulationObserverTest {
 
 
 
-        DefaultSymmetricSimulation sim = new DefaultSymmetricSimulation("test","testEmptyObservationCount");
+        MutableSymmetricSimulation sim = new DefaultSymmetricSimulation("test","testEmptyObservationCount");
 
         for(int p = 0; p < players.length; p++) {
             sim.addPlayer(players[p]);

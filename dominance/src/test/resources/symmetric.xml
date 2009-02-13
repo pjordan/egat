@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<nfg name="TEST" description="TEST">
+        <players>
+            <player id="alice"/>
+            <player id="bob"/>
+        </players>
+        <actions>
+            <action id="c"/>
+            <action id="d"/>
+        </actions>
+    <payoffs>
+        <payoff>
+            <outcome action="c" count="2" value="3.0"/>
+        </payoff>
+        <payoff>
+            <outcome action="d" count="2" value="1.0"/>
+        </payoff>
+        <payoff>
+            <outcome action="c" count="1" value="0.0"/>
+            <outcome action="d" count="1" value="5.0"/>
+        </payoff>
+    </payoffs>
+</nfg>

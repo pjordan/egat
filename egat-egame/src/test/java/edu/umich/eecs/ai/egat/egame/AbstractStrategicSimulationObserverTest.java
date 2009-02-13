@@ -5,7 +5,6 @@ import org.junit.Assert;
 import edu.umich.eecs.ai.egat.game.*;
 
 import java.util.Set;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -37,7 +36,7 @@ public class AbstractStrategicSimulationObserverTest {
                                               Games.createAction("b")}};
         double[] values = new double[] {0.0, 1.0};
 
-        DefaultStrategicSimulation sim = new DefaultStrategicSimulation("test","testEmptyObservationCount");
+        MutableStrategicSimulation sim = new DefaultStrategicSimulation("test","testEmptyObservationCount");
 
         for(int p = 0; p < players.length; p++) {
             sim.addPlayer(players[p]);

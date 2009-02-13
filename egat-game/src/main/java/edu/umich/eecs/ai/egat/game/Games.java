@@ -49,7 +49,26 @@ public final class Games {
         };
     }
 
+    /**
+     * Creates a pure strategy
+     *
+     * @param id the id of the action
+     * @return the strategy
+     */
+    public static Strategy createPureStrategy(final String id) {
+        return createPureStrategy(createAction(id));
+    }
 
+
+    /**
+     * Creates a pure strategy.
+     *
+     * @param action the action
+     * @return the strategy
+     */
+    public static Strategy createPureStrategy(Action action) {
+        return createStrategy(new Action[] { action }, new Number[] {1.0});
+    }
     /**
      * Create an outcome traversal object for a strategic simulation.
      *

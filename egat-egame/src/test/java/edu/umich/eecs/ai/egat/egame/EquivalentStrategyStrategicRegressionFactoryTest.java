@@ -55,7 +55,7 @@ public class EquivalentStrategyStrategicRegressionFactoryTest {
 
 
     protected StrategicSimulation createTestSimulation(Player[] players, Action[][] actions) {
-        DefaultStrategicSimulation sim = new DefaultStrategicSimulation("test","testRegression");
+        MutableStrategicSimulation sim = new DefaultStrategicSimulation("test","testRegression");
 
         for(int p = 0; p < players.length; p++) {
             sim.addPlayer(players[p]);

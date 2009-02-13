@@ -28,6 +28,7 @@
 	<module>egat-egame-xml</module>
 	<module>egat-cli</module>
 	<module>min-curb</module>
+	<module>dominance</module>
   </modules>
   <repositories>
     <repository>

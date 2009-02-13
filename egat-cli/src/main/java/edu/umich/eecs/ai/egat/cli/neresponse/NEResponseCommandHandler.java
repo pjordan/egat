@@ -4,7 +4,6 @@ import edu.umich.eecs.ai.egat.cli.CommandProcessingException;
 import edu.umich.eecs.ai.egat.cli.AbstractGameCommandHandler;
 import edu.umich.eecs.ai.egat.game.*;
 import edu.umich.eecs.ai.egat.gamexml.StrategyHandler;
-import edu.umich.eecs.ai.egat.gamexml.SymmetricGameHandler;
 import org.apache.commons.cli2.builder.GroupBuilder;
 import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 import org.apache.commons.cli2.builder.ArgumentBuilder;
@@ -82,7 +81,7 @@ public class NEResponseCommandHandler extends AbstractGameCommandHandler {
         return "ne-response";
     }
 
-    protected void processSymmetricGame(DefaultSymmetricGame game) throws CommandProcessingException {
+    protected void processSymmetricGame(MutableSymmetricGame game) throws CommandProcessingException {
 
         InputStream inputStream = null;
         try {
@@ -116,7 +115,7 @@ public class NEResponseCommandHandler extends AbstractGameCommandHandler {
         }
     }
 
-    protected void processStrategicGame(DefaultStrategicGame game) throws CommandProcessingException {
+    protected void processStrategicGame(MutableStrategicGame game) throws CommandProcessingException {
         throw new UnsupportedOperationException("NE-response is defined");
     }
 

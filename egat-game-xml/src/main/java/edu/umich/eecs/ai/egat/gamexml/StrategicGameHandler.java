@@ -156,7 +156,7 @@ public class StrategicGameHandler extends DefaultHandler {
 
     }
 
-    public DefaultStrategicGame<PayoffValue> getGame() {
+    public MutableStrategicGame<PayoffValue> getGame() {
         return game;
     }
 }
