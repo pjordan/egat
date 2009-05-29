@@ -38,7 +38,7 @@ public class EquivalentStrategyStrategicRegressionFactoryTest {
 
         EquivalentStrategyStrategicRegressionFactory factory = new EquivalentStrategyStrategicRegressionFactory(actionConverter);
 
-        StrategicSimulation sim = createTestSimulation(players,actions);
+        StrategicMultiAgentSystem sim = createTestSimulation(players,actions);
 
         StrategicSimulationObserver observer = new AbstractStrategicSimulationObserver(sim);
 
@@ -54,8 +54,8 @@ public class EquivalentStrategyStrategicRegressionFactoryTest {
     }
 
 
-    protected StrategicSimulation createTestSimulation(Player[] players, Action[][] actions) {
-        MutableStrategicSimulation sim = new DefaultStrategicSimulation("test","testRegression");
+    protected StrategicMultiAgentSystem createTestSimulation(Player[] players, Action[][] actions) {
+        MutableStrategicMultiAgentSystem sim = new DefaultStrategicMultiAgentSystem("test","testRegression");
 
         for(int p = 0; p < players.length; p++) {
             sim.addPlayer(players[p]);

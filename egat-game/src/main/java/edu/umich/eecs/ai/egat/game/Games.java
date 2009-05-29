@@ -26,12 +26,7 @@ public final class Games {
      * @return the player
      */
     public static Player createPlayer(final String id) {
-        return new AbstractPlayer() {
-
-            public String getID() {
-                return id;
-            }
-        };
+        return new SimplePlayer(id);
     }
 
     /**
@@ -41,12 +36,7 @@ public final class Games {
      * @return the action
      */
     public static Action createAction(final String id) {
-        return new AbstractAction() {
-
-            public String getID() {
-                return id;
-            }
-        };
+        return new SimpleAction(id);
     }
 
     /**
@@ -75,7 +65,7 @@ public final class Games {
      * @param simulation the strategic simulation
      * @return the outcome traversal
      */
-    public static OutcomeTraversal traversal(StrategicSimulation simulation) {
+    public static OutcomeTraversal traversal(StrategicMultiAgentSystem simulation) {
         return new DefaultOutcomeTraversal(simulation);
     }
 
@@ -86,14 +76,14 @@ public final class Games {
      * @param simulation the symmetric simulation.
      * @return the outcome traversal.
      */
-    public static SymmetricOutcomeTraversal symmetricTraversal(SymmetricSimulation simulation) {
+    public static SymmetricOutcomeTraversal symmetricTraversal(SymmetricMultiAgentSystem simulation) {
         return new SymmetricOutcomeTraversalImpl(simulation);
     }
 
     static class DefaultOutcomeTraversal implements OutcomeTraversal {
-        StrategicSimulation game;
+        StrategicMultiAgentSystem game;
 
-        public DefaultOutcomeTraversal(StrategicSimulation simulation) {
+        public DefaultOutcomeTraversal(StrategicMultiAgentSystem simulation) {
             this.game = simulation;
         }
 
@@ -103,11 +93,11 @@ public final class Games {
 
 
         private static class IteratorImpl implements Iterator<Outcome> {
-            private StrategicSimulation simulation;
+            private StrategicMultiAgentSystem simulation;
             private CrossProductIterator<Action> iterator;
             private List<Player> players;
 
-            public IteratorImpl(StrategicSimulation simulation) {
+            public IteratorImpl(StrategicMultiAgentSystem simulation) {
                 this.simulation = simulation;
 
                 List<Set<Action>> actions = new LinkedList<Set<Action>>();
@@ -192,9 +182,9 @@ public final class Games {
     }
 
     static class SymmetricOutcomeTraversalImpl implements SymmetricOutcomeTraversal {
-        private SymmetricSimulation simulation;
+        private SymmetricMultiAgentSystem simulation;
 
-        public SymmetricOutcomeTraversalImpl(SymmetricSimulation simulation) {
+        public SymmetricOutcomeTraversalImpl(SymmetricMultiAgentSystem simulation) {
             this.simulation = simulation;
         }
 
@@ -203,12 +193,12 @@ public final class Games {
         }
 
         private static class IteratorImpl implements Iterator<SymmetricOutcome> {
-            private SymmetricSimulation simulation;
+            private SymmetricMultiAgentSystem simulation;
             private SymmetryIterator<Action> iterator;
 
             private List<Player> players;
 
-            public IteratorImpl(SymmetricSimulation simulation) {
+            public IteratorImpl(SymmetricMultiAgentSystem simulation) {
                 this.simulation = simulation;
 
                 Set<Action> actions = new HashSet<Action>();
@@ -763,5 +753,118 @@ public final class Games {
             }
         }
         return epsilon;
+    }
+
+
+
+    public static double regret(Profile profile, StrategicGame game) {
+        double epsilon = 0.0;
+
+        for (Player player : game.players()) {
+            for(Action action : game.getActions(player)) {
+                epsilon = Math.max(epsilon, playerGain(game, profile, player, action));        
+            }
+        }
+
+        return epsilon;
+    }
+
+    public static double playerGain(StrategicGame game, Outcome outcome, Player player, Action action) {
+        Player[] players = outcome.players().toArray(new Player[0]);
+        Action[] actions = new Action[players.length];
+
+        for(int i = 0; i < players.length; i++) {
+            if(players[i].equals(player)) {
+                actions[i] = action;
+            } else {
+                actions[i] = outcome.getAction(players[i]);
+            }
+        }
+
+        double originalPayoff = game.payoff(outcome).getPayoff(player).getValue();
+        double deviatingPayoff = game.payoff(Games.createOutcome(players,actions)).getPayoff(player).getValue();
+
+        return deviatingPayoff - originalPayoff;
+    }
+
+    public static double playerGain(StrategicGame game, Profile profile, Player player, Strategy strategy) {
+        Player[] players = profile.players().toArray(new Player[0]);
+        Strategy[] strategies = new Strategy[players.length];
+
+        for(int i = 0; i < players.length; i++) {
+            if(players[i].equals(player)) {
+                strategies[i] = strategy;
+            } else {
+                strategies[i] = profile.getStrategy(players[i]);
+            }
+        }
+
+        double originalPayoff = game.payoff(profile).getPayoff(player).getValue();
+        double deviatingPayoff = game.payoff(Games.createProfile(players,strategies)).getPayoff(player).getValue();
+
+        return deviatingPayoff - originalPayoff;
+    }
+
+    public static double playerGain(StrategicGame game, Profile profile, Player player, Action action) {
+        return playerGain(game, profile, player, Games.createPureStrategy(action));
+    }
+
+    public static Payoff computeStrategicPayoff(final Profile profile, final StrategicGame game) {
+        Player[] players = game.players().toArray(new Player[0]);
+
+        double[] payoffs = new double[players.length];
+
+        for (Outcome outcome : Games.traversal(game)) {
+
+            Payoff payoff = game.payoff(outcome);
+
+            double prob = 1.0;
+
+            for (int i = 0; i < players.length; i++) {
+                Strategy strategy = profile.getStrategy(players[i]);
+                prob *= strategy.getProbability(outcome.getAction(players[i])).doubleValue();
+            }
+
+            for (int i = 0; i < players.length; i++) {
+                PayoffValue value = payoff.getPayoff(players[i]);
+                if (value != null) {
+                    payoffs[i] += prob * value.getValue();
+                }
+            }
+        }
+
+        return PayoffFactory.createPayoff(players, payoffs);
+    }
+
+    public static Payoff computeStrategicPayoffUsingReduction(final Profile profile, final StrategicGame game) {
+        Player[] players = game.players().toArray(new Player[0]);
+        double[] payoffs = new double[players.length];
+
+        StrategicGame reducedGame = game;
+
+        for(int i = 0; i < players.length; i++) {
+            reducedGame = new ActionReducedStrategicGame(reducedGame, players[i], profile.getStrategy(players[i]).actions());
+        }
+
+        for (Outcome outcome : Games.traversal(reducedGame)) {
+
+            Payoff payoff = game.payoff(outcome);
+
+            double prob = 1.0;
+
+            for (int i = 0; i < players.length; i++) {
+                Strategy strategy = profile.getStrategy(players[i]);
+                prob *= strategy.getProbability(outcome.getAction(players[i])).doubleValue();
+            }
+
+            for (int i = 0; i < players.length; i++) {
+                PayoffValue value = payoff.getPayoff(players[i]);
+                if (value != null) {
+                    payoffs[i] += prob * value.getValue();
+                }
+            }
+        }
+
+        return PayoffFactory.createPayoff(players, payoffs);
     }
 }

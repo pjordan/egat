@@ -18,7 +18,7 @@ public class AbstractSymmetricSimulationObserverTest {
 
     @Test
     public void testEmptyObservationCount() {
-        SymmetricSimulation sim = new DefaultSymmetricSimulation("A","Test A");
+        SymmetricMultiAgentSystem sim = new DefaultSymmetricMultiAgentSystem("A","Test A");
         SymmetricSimulationObserver observer = new AbstractSymmetricSimulationObserver(sim);
         Assert.assertEquals(observer.getObservationCount(),0L);
         Assert.assertSame(sim,observer.getSymmetricSimulation());
@@ -33,7 +33,7 @@ public class AbstractSymmetricSimulationObserverTest {
 
 
 
-        MutableSymmetricSimulation sim = new DefaultSymmetricSimulation("test","testEmptyObservationCount");
+        MutableSymmetricMultiAgentSystem sim = new DefaultSymmetricMultiAgentSystem("test","testEmptyObservationCount");
 
         for(int p = 0; p < players.length; p++) {
             sim.addPlayer(players[p]);

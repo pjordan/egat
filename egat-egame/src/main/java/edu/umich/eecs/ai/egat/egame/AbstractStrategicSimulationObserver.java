@@ -9,12 +9,12 @@ import java.util.LinkedList;
  * @author Patrick Jordan
  */
 public class AbstractStrategicSimulationObserver implements StrategicSimulationObserver {
-    protected StrategicSimulation simulation;
+    protected StrategicMultiAgentSystem simulation;
     protected long observationCount;
     protected OutcomeMap<List<Payoff>, Outcome> observations;
 
 
-    public AbstractStrategicSimulationObserver(StrategicSimulation simulation) {
+    public AbstractStrategicSimulationObserver(StrategicMultiAgentSystem simulation) {
         if(simulation==null)
             throw new NullPointerException("Simulation cannot be null");
         this.simulation = simulation;
@@ -23,7 +23,7 @@ public class AbstractStrategicSimulationObserver implements StrategicSimulationO
     }
 
 
-    public StrategicSimulation getStrategicSimulation() {
+    public StrategicMultiAgentSystem getStrategicSimulation() {
         return simulation;
     }
 

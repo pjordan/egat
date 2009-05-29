@@ -32,7 +32,7 @@ public class KFoldsStrategicValidator implements StrategicCrossValidator {
         for(int i = 0; i < observers.length; i++) {
            StrategicSimulationObserver trainingObserver = mergeObservers(observer.getStrategicSimulation(), observers, i);
 
-            computeMSE(regressionFactory, trainingObserver, observers[i], stats);
+            EGames.updateErrorStats(regressionFactory, trainingObserver, observers[i], stats);
         }
 
         return stats.rmse();
@@ -62,7 +62,7 @@ public class KFoldsStrategicValidator implements StrategicCrossValidator {
         return observers;
     }
 
-    protected StrategicSimulationObserver mergeObservers(StrategicSimulation simulation, StrategicSimulationObserver[] observers, int outIndex) {
+    protected StrategicSimulationObserver mergeObservers(StrategicMultiAgentSystem simulation, StrategicSimulationObserver[] observers, int outIndex) {
         StrategicSimulationObserver observer = new AbstractStrategicSimulationObserver(simulation);
 
         for(Outcome outcome : Games.traversal(observer.getStrategicSimulation())) {
@@ -76,49 +76,5 @@ public class KFoldsStrategicValidator implements StrategicCrossValidator {
         }
 
         return observer;
-    }
-
-    protected void computeMSE(StrategicRegressionFactory regressionFactory, StrategicSimulationObserver trainingObserver, StrategicSimulationObserver validationObserver, ErrorStats errorStats) {
-        StrategicRegression regression = regressionFactory.regress(trainingObserver);
-
-        for(Outcome outcome : Games.traversal(validationObserver.getStrategicSimulation())) {
-            for(Payoff payoff : validationObserver.getObservations(outcome)) {
-                computeMSE(payoff, regression.predict(outcome), errorStats);
-            }
-        }
-    }
-
-    protected void computeMSE(Payoff payoff1, Payoff payoff2, ErrorStats errorStats) {
-        for(Player player : (Set<Player>)payoff1.players()) {
-            double p1 = payoff1.getPayoff(player).getValue();
-            double p2 = payoff2.getPayoff(player).getValue();
-
-            errorStats.addError((p1 - p2)*(p1-p2));
-        }
-        
-    }
-
-    private static class ErrorStats {
-        protected double errorSum;
-        protected double count;
-
-
-        public ErrorStats() {
-            errorSum = 0.0;
-            count = 0.0;
-        }
-
-        public void addError(double error) {
-            errorSum+=error;
-            count++;
-        }
-
-        public double mse() {
-            return errorSum/count;
-        }
-
-        public double rmse() {
-            return Math.sqrt(mse());
-        }
     }
 }

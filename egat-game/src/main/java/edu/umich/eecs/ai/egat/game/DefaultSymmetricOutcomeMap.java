@@ -21,6 +21,6 @@ public class DefaultSymmetricOutcomeMap<T> implements OutcomeMap<T,SymmetricOutc
     }
 
 
-    public void build(StrategicSimulation simulation) {
+    public void build(StrategicMultiAgentSystem simulation) {
     }
 }

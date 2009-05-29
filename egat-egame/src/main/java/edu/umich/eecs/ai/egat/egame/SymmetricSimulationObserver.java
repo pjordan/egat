@@ -8,7 +8,7 @@ import java.util.List;
  * @author Patrick Jordan
  */
 public interface SymmetricSimulationObserver {
-    SymmetricSimulation getSymmetricSimulation();
+    SymmetricMultiAgentSystem getSymmetricSimulation();
 
     void observe(SymmetricOutcome outcome, SymmetricPayoff payoff);
 

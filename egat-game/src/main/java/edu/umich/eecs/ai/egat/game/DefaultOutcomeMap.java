@@ -19,7 +19,7 @@ public class DefaultOutcomeMap<T> implements OutcomeMap<T,Outcome>{
 
 
 
-    public void build(StrategicSimulation simulation) {
+    public void build(StrategicMultiAgentSystem simulation) {
         int index = 0;
         indexPlayer = simulation.players().toArray(new Player[0]);
         playerActionIndex = (Map<Action, Integer>[])new Map[indexPlayer.length];

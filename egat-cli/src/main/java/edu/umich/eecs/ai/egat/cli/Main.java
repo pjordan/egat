@@ -13,7 +13,7 @@ import edu.umich.eecs.ai.egat.cli.replicatordynamics.ReplicatorDynamicsCommandHa
 import edu.umich.eecs.ai.egat.cli.neresponse.NEResponseCommandHandler;
 import edu.umich.eecs.ai.egat.cli.robustregret.RobustRegretCommandHandler;
 import edu.umich.eecs.ai.egat.cli.strategyregret.StrategyRegretCommandHandler;
-import edu.umich.eecs.ai.egat.cli.mincurb.MinCurbCommandHandler;
+import edu.umich.eecs.ai.egat.cli.minform.MinFormCommandHandler;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -106,7 +106,7 @@ public class Main {
         commandHandlers.add(new ReplicatorDynamicsCommandHandler());
         commandHandlers.add(new NEResponseCommandHandler());
         commandHandlers.add(new StrategyRegretCommandHandler());
-        commandHandlers.add(new MinCurbCommandHandler());
+        commandHandlers.add(new MinFormCommandHandler());
         
         return commandHandlers;
     }

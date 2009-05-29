@@ -7,7 +7,7 @@ import edu.umich.eecs.ai.egat.game.*;
  */
 public class SimpleStrategicRegressionFactory implements StrategicRegressionFactory {
     public StrategicRegression regress(StrategicSimulationObserver observer) {
-        StrategicSimulation simulation = observer.getStrategicSimulation();
+        StrategicMultiAgentSystem simulation = observer.getStrategicSimulation();
         DefaultStrategicGame game = new DefaultStrategicGame(simulation.getName(), simulation.getDescription());
         BasicStatsStrategicSimulationObserver basicObserver = new BasicStatsStrategicSimulationObserverImpl(observer);
         for(Player p : simulation.players()) {

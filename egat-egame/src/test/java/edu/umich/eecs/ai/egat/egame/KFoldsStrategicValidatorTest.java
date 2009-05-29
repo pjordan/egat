@@ -26,7 +26,7 @@ public class KFoldsStrategicValidatorTest {
                                              {Games.createAction("B"),
                                               Games.createAction("b")}};
 
-        StrategicSimulation sim = createSimulation(players,actions);
+        StrategicMultiAgentSystem sim = createSimulation(players,actions);
         StrategicSimulationObserver observer = new AbstractStrategicSimulationObserver(sim);
         
         for(Outcome outcome : Games.traversal(sim)) {
@@ -50,7 +50,7 @@ public class KFoldsStrategicValidatorTest {
                                              {Games.createAction("B"),
                                               Games.createAction("b")}};
 
-        StrategicSimulation sim = createSimulation(players,actions);
+        StrategicMultiAgentSystem sim = createSimulation(players,actions);
         StrategicSimulationObserver observer = new AbstractStrategicSimulationObserver(sim);
 
         for(Outcome outcome : Games.traversal(sim)) {
@@ -65,8 +65,8 @@ public class KFoldsStrategicValidatorTest {
         Assert.assertEquals(rmse,1.0);
     }
 
-    protected StrategicSimulation createSimulation(Player[] players, Action[][] actions) {
-        MutableStrategicSimulation sim = new DefaultStrategicSimulation("test","testEmptyObservationCount");
+    protected StrategicMultiAgentSystem createSimulation(Player[] players, Action[][] actions) {
+        MutableStrategicMultiAgentSystem sim = new DefaultStrategicMultiAgentSystem("test","testEmptyObservationCount");
 
         for(int p = 0; p < players.length; p++) {
             sim.addPlayer(players[p]);

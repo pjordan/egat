@@ -24,7 +24,7 @@ public class KFoldsSymmetricValidatorTest {
         Action[] actions = new Action[]{Games.createAction("a"),
                 Games.createAction("b")};
 
-        SymmetricSimulation sim = createSimulation(players, actions);
+        SymmetricMultiAgentSystem sim = createSimulation(players, actions);
         SymmetricSimulationObserver observer = new AbstractSymmetricSimulationObserver(sim);
 
         observePayoffs( observer, 0.0);
@@ -45,7 +45,7 @@ public class KFoldsSymmetricValidatorTest {
                 Games.createAction("b")};
 
 
-        SymmetricSimulation sim = createSimulation(players, actions);
+        SymmetricMultiAgentSystem sim = createSimulation(players, actions);
         SymmetricSimulationObserver observer = new AbstractSymmetricSimulationObserver(sim);
 
         observePayoffs( observer, 0.0);
@@ -58,8 +58,8 @@ public class KFoldsSymmetricValidatorTest {
         Assert.assertEquals(rmse, 1.0);
     }
 
-    protected SymmetricSimulation createSimulation(Player[] players, Action[] actions) {
-        MutableSymmetricSimulation sim = new DefaultSymmetricSimulation("test", "testEmptyObservationCount");
+    protected SymmetricMultiAgentSystem createSimulation(Player[] players, Action[] actions) {
+        MutableSymmetricMultiAgentSystem sim = new DefaultSymmetricMultiAgentSystem("test", "testEmptyObservationCount");
 
         for (Player p : players) {
             sim.addPlayer(p);

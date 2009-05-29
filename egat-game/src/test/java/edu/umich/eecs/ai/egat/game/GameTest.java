@@ -9,14 +9,14 @@ public class GameTest extends TestCase {
     private Player player1;
     private Player player2;
     private Player player3;
-    private MutableGame game;
+    private MutableMultiAgentSystem game;
 
     protected void setUp() throws Exception {
         player1 = Games.createPlayer("row");
         player2 = Games.createPlayer("col");
         player3 = Games.createPlayer("row");
 
-        game = new DefaultGame("name","description");
+        game = new DefaultMultiAgentSystem("name","description");
     }
 
     public void testNameEquility() {
@@ -32,7 +32,7 @@ public class GameTest extends TestCase {
     }
 
     public void testAddPlayers() {
-        MutableGame emptyGame = new DefaultGame("name","description");
+        MutableMultiAgentSystem emptyGame = new DefaultMultiAgentSystem("name","description");
 
         assertEquals(emptyGame.players().size(),0);
 
@@ -50,7 +50,7 @@ public class GameTest extends TestCase {
     }
 
     public void testRemovePlayers() {
-        MutableGame emptyGame = new DefaultGame("name","description");
+        MutableMultiAgentSystem emptyGame = new DefaultMultiAgentSystem("name","description");
 
         assertEquals(emptyGame.players().size(),0);
 

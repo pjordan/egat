@@ -27,7 +27,7 @@ public class EquivalentStrategySymmetricRegressionFactoryTest {
 
         EquivalentStrategySymmetricRegressionFactory factory = new EquivalentStrategySymmetricRegressionFactory(actionConverter);
 
-        SymmetricSimulation sim = createTestSimulation(players,actions);
+        SymmetricMultiAgentSystem sim = createTestSimulation(players,actions);
 
         SymmetricSimulationObserver observer = new AbstractSymmetricSimulationObserver(sim);
 
@@ -47,8 +47,8 @@ public class EquivalentStrategySymmetricRegressionFactoryTest {
     }
 
 
-    protected SymmetricSimulation createTestSimulation(Player[] players, Action[] actions) {
-        MutableSymmetricSimulation sim = new DefaultSymmetricSimulation("test","testRegression");
+    protected SymmetricMultiAgentSystem createTestSimulation(Player[] players, Action[] actions) {
+        MutableSymmetricMultiAgentSystem sim = new DefaultSymmetricMultiAgentSystem("test","testRegression");
 
         for(Player p : players) {
             sim.addPlayer(p);

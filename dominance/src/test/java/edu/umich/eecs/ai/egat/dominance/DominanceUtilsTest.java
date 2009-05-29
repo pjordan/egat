@@ -49,7 +49,7 @@ public class DominanceUtilsTest {
         Player alice = Games.createPlayer("alice");
         Player bob = Games.createPlayer("bob");
 
-        StrategicSimulation reduced = createPlayerReducedStrategicSimulation(alice, game);
+        StrategicMultiAgentSystem reduced = createPlayerReducedStrategicSimulation(alice, game);
 
         assertTrue(reduced.players().contains(bob));
         assertFalse(reduced.players().contains(alice));
@@ -80,7 +80,7 @@ public class DominanceUtilsTest {
         Player alice = Games.createPlayer("alice");
         Player bob = Games.createPlayer("bob");
 
-        SymmetricSimulation reduced = createPlayerReducedSymmetricSimulation(alice, game);
+        SymmetricMultiAgentSystem reduced = createPlayerReducedSymmetricSimulation(alice, game);
 
         assertTrue(reduced.players().contains(bob));
         assertFalse(reduced.players().contains(alice));

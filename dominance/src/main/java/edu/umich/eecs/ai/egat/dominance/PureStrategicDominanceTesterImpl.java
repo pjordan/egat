@@ -3,8 +3,6 @@ package edu.umich.eecs.ai.egat.dominance;
 import edu.umich.eecs.ai.egat.game.*;
 
 import static edu.umich.eecs.ai.egat.dominance.DominanceUtils.*;
-import java.util.Set;
-import java.util.HashSet;
 
 /**
  * @author Patrick Jordan
@@ -16,7 +14,7 @@ public class PureStrategicDominanceTesterImpl implements StrategicDominanceTeste
 
         int playerIndex = indexForPlayer(player, players);
 
-        StrategicSimulation reduced = createPlayerReducedStrategicSimulation(player, game);
+        StrategicMultiAgentSystem reduced = createPlayerReducedStrategicSimulation(player, game);
 
         for (Action a : game.getActions(player)) {
 
@@ -47,7 +45,7 @@ public class PureStrategicDominanceTesterImpl implements StrategicDominanceTeste
 
         int playerIndex = indexForPlayer(player, players);
 
-        StrategicSimulation reduced = createPlayerReducedStrategicSimulation(player, game);
+        StrategicMultiAgentSystem reduced = createPlayerReducedStrategicSimulation(player, game);
 
         for (Action a : game.getActions(player)) {
             Strategy s = Games.createPureStrategy(a);

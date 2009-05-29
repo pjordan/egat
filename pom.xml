@@ -27,8 +27,10 @@
     <module>egat-game-xml</module>
 	<module>egat-egame-xml</module>
 	<module>egat-cli</module>
-	<module>min-curb</module>
+	<module>min-form</module>
 	<module>dominance</module>
+	<module>graphical-game</module>
+    <module>graphical-egame</module>
   </modules>
   <repositories>
     <repository>

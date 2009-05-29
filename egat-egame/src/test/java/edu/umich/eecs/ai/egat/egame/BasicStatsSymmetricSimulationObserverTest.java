@@ -20,7 +20,7 @@ public class BasicStatsSymmetricSimulationObserverTest {
 
 
 
-        MutableSymmetricSimulation sim = new DefaultSymmetricSimulation("test","testEmptyObservationCount");
+        MutableSymmetricMultiAgentSystem sim = new DefaultSymmetricMultiAgentSystem("test","testEmptyObservationCount");
 
         for(int p = 0; p < players.length; p++) {
             sim.addPlayer(players[p]);

@@ -3,9 +3,6 @@ package edu.umich.eecs.ai.egat.dominance;
 import edu.umich.eecs.ai.egat.game.*;
 import static edu.umich.eecs.ai.egat.dominance.DominanceUtils.*;
 
-import java.util.Set;
-import java.util.HashSet;
-
 /**
  * @author Patrick Jordan
  */
@@ -16,7 +13,7 @@ public class PureSymmetricDominanceTesterImpl implements SymmetricDominanceTeste
 
         int playerIndex = 0;
 
-        SymmetricSimulation reduced = createPlayerReducedSymmetricSimulation(players[playerIndex], game);
+        SymmetricMultiAgentSystem reduced = createPlayerReducedSymmetricSimulation(players[playerIndex], game);
 
         for (Action a : game.getActions()) {
 
@@ -47,7 +44,7 @@ public class PureSymmetricDominanceTesterImpl implements SymmetricDominanceTeste
 
         int playerIndex = 0;
 
-        SymmetricSimulation reduced = createPlayerReducedSymmetricSimulation(players[playerIndex], game);
+        SymmetricMultiAgentSystem reduced = createPlayerReducedSymmetricSimulation(players[playerIndex], game);
 
         for (Action a : game.getActions()) {
             Strategy s = Games.createPureStrategy(a);

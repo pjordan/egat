@@ -9,11 +9,11 @@ import java.util.LinkedList;
  * @author Patrick Jordan
  */
 public class AbstractSymmetricSimulationObserver implements SymmetricSimulationObserver {
-    protected SymmetricSimulation simulation;
+    protected SymmetricMultiAgentSystem simulation;
     protected long observationCount;
     protected OutcomeMap<List<SymmetricPayoff>, SymmetricOutcome> observations;
 
-    public AbstractSymmetricSimulationObserver(SymmetricSimulation simulation) {
+    public AbstractSymmetricSimulationObserver(SymmetricMultiAgentSystem simulation) {
         if(simulation==null)
             throw new NullPointerException("Simulation cannot be null");
         
@@ -23,7 +23,7 @@ public class AbstractSymmetricSimulationObserver implements SymmetricSimulationO
     }
 
 
-    public SymmetricSimulation getSymmetricSimulation() {
+    public SymmetricMultiAgentSystem getSymmetricSimulation() {
         return simulation;
     }
 

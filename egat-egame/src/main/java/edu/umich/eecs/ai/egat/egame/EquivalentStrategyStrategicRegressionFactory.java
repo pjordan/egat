@@ -19,8 +19,8 @@ public class EquivalentStrategyStrategicRegressionFactory implements StrategicRe
 
 
     public StrategicRegression regress(StrategicSimulationObserver observer) {
-        StrategicSimulation simulation = observer.getStrategicSimulation();
-        MutableStrategicSimulation reducedSimulation = new DefaultStrategicSimulation(simulation.getName(), simulation.getDescription());
+        StrategicMultiAgentSystem simulation = observer.getStrategicSimulation();
+        MutableStrategicMultiAgentSystem reducedSimulation = new DefaultStrategicMultiAgentSystem(simulation.getName(), simulation.getDescription());
         
         for(Player p : simulation.players()) {
             reducedSimulation.addPlayer(p);

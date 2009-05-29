@@ -10,7 +10,7 @@ import java.util.List;
 public class BasicStatsStrategicSimulationObserverImpl implements BasicStatsStrategicSimulationObserver {
     protected StrategicSimulationObserver baseObserver;
 
-    public BasicStatsStrategicSimulationObserverImpl(StrategicSimulation simulation) {
+    public BasicStatsStrategicSimulationObserverImpl(StrategicMultiAgentSystem simulation) {
         this(new AbstractStrategicSimulationObserver(simulation));
     }
 
@@ -30,7 +30,7 @@ public class BasicStatsStrategicSimulationObserverImpl implements BasicStatsStra
     }
 
 
-    public StrategicSimulation getStrategicSimulation() {
+    public StrategicMultiAgentSystem getStrategicSimulation() {
         return baseObserver.getStrategicSimulation();
     }
 

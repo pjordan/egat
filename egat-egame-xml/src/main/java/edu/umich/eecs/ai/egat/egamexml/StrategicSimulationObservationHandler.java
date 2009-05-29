@@ -14,7 +14,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Patrick Jordan
  */
 public class StrategicSimulationObservationHandler extends DefaultHandler {
-    DefaultStrategicSimulation simulation;
+    DefaultStrategicMultiAgentSystem simulation;
     StrategicSimulationObserver observer;
     Player currentPlayer;
     Set<Action> currentActions;
@@ -27,7 +27,7 @@ public class StrategicSimulationObservationHandler extends DefaultHandler {
     int count;
 
     public StrategicSimulationObservationHandler() {
-        simulation = new DefaultStrategicSimulation();
+        simulation = new DefaultStrategicMultiAgentSystem();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class StrategicSimulationObservationHandler extends DefaultHandler {
     }
 
     private void handleStartSimulation(Attributes attributes) throws SAXException {
-        simulation = new DefaultStrategicSimulation();
+        simulation = new DefaultStrategicMultiAgentSystem();
         simulation.setName(attributes.getValue("name"));
         simulation.setDescription(attributes.getValue("description"));
     }
@@ -169,7 +169,7 @@ public class StrategicSimulationObservationHandler extends DefaultHandler {
 
     }
 
-    public StrategicSimulation getSimulation() {
+    public StrategicMultiAgentSystem getSimulation() {
         return simulation;
     }
 

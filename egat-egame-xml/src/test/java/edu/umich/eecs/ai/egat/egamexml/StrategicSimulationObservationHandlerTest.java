@@ -10,7 +10,6 @@ import javax.xml.parsers.SAXParser;
 import java.io.IOException;
 
 import edu.umich.eecs.ai.egat.egame.StrategicSimulationObserver;
-import edu.umich.eecs.ai.egat.game.StrategicSimulation;
 
 /**
  * @author Patrick Jordan

@@ -22,18 +22,18 @@ public class DominanceUtils {
         return -1;
     }
 
-    public static StrategicSimulation createPlayerReducedStrategicSimulation(Player player, StrategicSimulation simulation) {
+    public static StrategicMultiAgentSystem createPlayerReducedStrategicSimulation(Player player, StrategicMultiAgentSystem simulation) {
         Set<Player> otherPlayers = new HashSet<Player>(simulation.players());
         otherPlayers.remove(player);
 
-        return new PlayerReducedStrategicSimulation(simulation, otherPlayers);
+        return new PlayerReducedStrategicMultiAgentSystem(simulation, otherPlayers);
     }
 
-    public static SymmetricSimulation createPlayerReducedSymmetricSimulation(Player player, SymmetricSimulation simulation) {
+    public static SymmetricMultiAgentSystem createPlayerReducedSymmetricSimulation(Player player, SymmetricMultiAgentSystem simulation) {
         Set<Player> otherPlayers = new HashSet<Player>(simulation.players());
         otherPlayers.remove(player);
 
-        return new PlayerReducedSymmetricSimulation(simulation, otherPlayers);
+        return new PlayerReducedSymmetricMultiAgentSystem(simulation, otherPlayers);
     }
 
     public static double getPayoff(Action action, Outcome outcome, Player[] players, Action[] actions, StrategicGame game, int index) {

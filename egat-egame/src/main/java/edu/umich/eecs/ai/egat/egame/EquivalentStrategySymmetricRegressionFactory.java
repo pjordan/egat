@@ -19,8 +19,8 @@ public class EquivalentStrategySymmetricRegressionFactory implements SymmetricRe
 
 
     public SymmetricRegression regress(SymmetricSimulationObserver observer) {
-        SymmetricSimulation simulation = observer.getSymmetricSimulation();
-        MutableSymmetricSimulation reducedSimulation = new DefaultSymmetricSimulation(simulation.getName(), simulation.getDescription());
+        SymmetricMultiAgentSystem simulation = observer.getSymmetricSimulation();
+        MutableSymmetricMultiAgentSystem reducedSimulation = new DefaultSymmetricMultiAgentSystem(simulation.getName(), simulation.getDescription());
 
         for (Player p : simulation.players()) {
             reducedSimulation.addPlayer(p);

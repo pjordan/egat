@@ -57,4 +57,91 @@ public class EGames {
 
         return PayoffFactory.createSymmetricPayoff(map,outcome);
     }
+
+    public static void updateErrorStats(Payoff payoff1, Payoff payoff2, ErrorStats errorStats) {
+        for(Player player : (Set<Player>)payoff1.players()) {
+            double p1 = payoff1.getPayoff(player).getValue();
+            double p2 = payoff2.getPayoff(player).getValue();
+
+            errorStats.addError((p1 - p2)*(p1-p2));
+        }
+
+    }
+
+    public static void updateErrorStats(StrategicRegressionFactory regressionFactory,
+                                        StrategicSimulationObserver trainingObserver,
+                                        StrategicSimulationObserver validationObserver,
+                                        ErrorStats errorStats) {
+        StrategicRegression regression = regressionFactory.regress(trainingObserver);
+
+        for(Outcome outcome : Games.traversal(validationObserver.getStrategicSimulation())) {
+            for(Payoff payoff : validationObserver.getObservations(outcome)) {
+                updateErrorStats(payoff, regression.predict(outcome), errorStats);
+            }
+        }
+    }
+
+    public static void updateErrorStats(SymmetricRegressionFactory regressionFactory,
+                                 SymmetricSimulationObserver trainingObserver,
+                                 SymmetricSimulationObserver validationObserver,
+                                 ErrorStats errorStats) {
+        SymmetricRegression regression = regressionFactory.regress(trainingObserver);
+
+        for(SymmetricOutcome outcome : Games.symmetricTraversal(validationObserver.getSymmetricSimulation())) {
+            for(SymmetricPayoff payoff : validationObserver.getObservations(outcome)) {
+                updateErrorStats(payoff, regression.predict(outcome), errorStats);
+            }
+        }
+    }
+
+    public static void updateRegressionStats(StrategicRegressionFactory regressionFactory,
+                                        StrategicSimulationObserver trainingObserver,
+                                        StrategicSimulationObserver validationObserver,
+                                        RegressionStatistics regressionStatistics) {
+        
+        StrategicRegression optimalRegression = regressionFactory.regress(validationObserver);
+        StrategicRegression regression = regressionFactory.regress(trainingObserver);
+
+        for(Outcome outcome : Games.traversal(validationObserver.getStrategicSimulation())) {
+            updateRegressionStatsBias(optimalRegression.predict(outcome), regression.predict(outcome), regressionStatistics);   
+
+            for(Payoff payoff : validationObserver.getObservations(outcome)) {
+                updateRegressionStatsError(payoff, regression.predict(outcome), regressionStatistics);
+            }
+        }
+    }
+
+    public static void updateRegressionStats(SymmetricRegressionFactory regressionFactory,
+                                             SymmetricSimulationObserver trainingObserver,
+                                             SymmetricSimulationObserver validationObserver,
+                                             RegressionStatistics regressionStatistics) {
+        SymmetricRegression optimalRegression = regressionFactory.regress(validationObserver);
+        SymmetricRegression regression = regressionFactory.regress(trainingObserver);
+
+        for(SymmetricOutcome outcome : Games.symmetricTraversal(validationObserver.getSymmetricSimulation())) {
+            updateRegressionStatsBias(optimalRegression.predict(outcome), regression.predict(outcome), regressionStatistics);
+
+            for(SymmetricPayoff payoff : validationObserver.getObservations(outcome)) {
+                updateRegressionStatsError(payoff, regression.predict(outcome), regressionStatistics);
+            }
+        }
+    }
+
+    private static void updateRegressionStatsBias(Payoff payoff1, Payoff payoff2, RegressionStatistics regressionStatistics) {
+        for(Player player : (Set<Player>)payoff1.players()) {
+            double p1 = payoff1.getPayoff(player).getValue();
+            double p2 = payoff2.getPayoff(player).getValue();
+
+            regressionStatistics.addBias(p1 - p2);
+        }
+    }
+
+    private static void updateRegressionStatsError(Payoff payoff1, Payoff payoff2, RegressionStatistics regressionStatistics) {
+        for(Player player : (Set<Player>)payoff1.players()) {
+            double p1 = payoff1.getPayoff(player).getValue();
+            double p2 = payoff2.getPayoff(player).getValue();
+
+            regressionStatistics.addError(p1 - p2);
+        }
+    }
 }

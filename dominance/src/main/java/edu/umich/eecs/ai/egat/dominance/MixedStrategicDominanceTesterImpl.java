@@ -240,7 +240,7 @@ public class MixedStrategicDominanceTesterImpl implements StrategicDominanceTest
         return slack < SLACK_TOLERANCE;
     }
 
-    protected static List<Outcome> createSubgameOutcomes(Player player, StrategicSimulation simulation) {
+    protected static List<Outcome> createSubgameOutcomes(Player player, StrategicMultiAgentSystem simulation) {
         List<Outcome> subOutcomes = new ArrayList<Outcome>();
 
         for (Outcome o : Games.traversal(createPlayerReducedStrategicSimulation(player, simulation))) {

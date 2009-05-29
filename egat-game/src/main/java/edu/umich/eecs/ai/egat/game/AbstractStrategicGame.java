@@ -1,42 +1,45 @@
 package edu.umich.eecs.ai.egat.game;
 
 /**
+ * The abstract strategic game class defines a helper method for computing the profile payoffs of
+ * strategic games.
+ *
+ * @param <T> the payoff value type.
+ *
  * @author Patrick Jordan
  */
-public abstract class AbstractStrategicGame<T extends PayoffValue> extends DefaultGame implements StrategicGame<T> {
-    public AbstractStrategicGame(String name, String description) {
+public abstract class AbstractStrategicGame<T extends PayoffValue> extends DefaultMultiAgentSystem
+                                                                   implements StrategicGame<T> {
+
+    /**
+     * Creates an abstract strategic game.
+     * @param name the name of the game.
+     * @param description the description of the game.
+     */
+    public AbstractStrategicGame(final String name, final String description) {
         super(name, description);
     }
 
-    public AbstractStrategicGame(String name) {
+    /**
+     * Creates an abstract strategic game.
+     * @param name the name of the game.
+     */
+    public AbstractStrategicGame(final String name) {
         super(name);
     }
 
+    /**
+     * Creates and abstract strategic game.
+     */
     protected AbstractStrategicGame() {
     }
 
-    public Payoff payoff(final Profile profile) {
-        Player[] players = players().toArray(new Player[0]);
-        double[] payoffs = new double[players.length];
-
-        for (Outcome outcome : Games.traversal(this)) {
-            Payoff payoff = payoff(outcome);
-
-            double prob = 1.0;
-
-            for (int i = 0; i < players.length; i++) {
-                Strategy strategy = profile.getStrategy(players[i]);
-                prob *= strategy.getProbability(outcome.getAction(players[i])).doubleValue();
-            }
-
-            for (int i = 0; i < players.length; i++) {
-                PayoffValue value = payoff.getPayoff(players[i]);
-                if (value != null) {
-                    payoffs[i] += prob * value.getValue();
-                }
-            }
-        }
-
-        return PayoffFactory.createPayoff(players, payoffs);
+    /**
+     * Computes the payoff of a given profile.
+     * @param profile the profile.
+     * @return the payoff of a given profile.
+     */
+    public final Payoff payoff(final Profile profile) {
+        return Games.computeStrategicPayoffUsingReduction(profile, this);
     }
 }

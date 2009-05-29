@@ -20,7 +20,7 @@ public class AbstractStrategicSimulationObserverTest {
 
     @Test
     public void testEmptyObservationCount() {
-        StrategicSimulation sim = new DefaultStrategicSimulation("A","Test A");
+        StrategicMultiAgentSystem sim = new DefaultStrategicMultiAgentSystem("A","Test A");
         StrategicSimulationObserver observer = new AbstractStrategicSimulationObserver(sim);
         Assert.assertEquals(observer.getObservationCount(),0L);
         Assert.assertSame(sim,observer.getStrategicSimulation());
@@ -36,7 +36,7 @@ public class AbstractStrategicSimulationObserverTest {
                                               Games.createAction("b")}};
         double[] values = new double[] {0.0, 1.0};
 
-        MutableStrategicSimulation sim = new DefaultStrategicSimulation("test","testEmptyObservationCount");
+        MutableStrategicMultiAgentSystem sim = new DefaultStrategicMultiAgentSystem("test","testEmptyObservationCount");
 
         for(int p = 0; p < players.length; p++) {
             sim.addPlayer(players[p]);

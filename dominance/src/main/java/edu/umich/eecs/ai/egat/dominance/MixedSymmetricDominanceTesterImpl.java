@@ -241,7 +241,7 @@ public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTest
         return slack < SLACK_TOLERANCE;
     }
 
-    protected static List<SymmetricOutcome> createSubgameOutcomes(Player player, SymmetricSimulation simulation) {
+    protected static List<SymmetricOutcome> createSubgameOutcomes(Player player, SymmetricMultiAgentSystem simulation) {
         List<SymmetricOutcome> subOutcomes = new ArrayList<SymmetricOutcome>();
 
         for (SymmetricOutcome o : Games.symmetricTraversal(createPlayerReducedSymmetricSimulation(player, simulation))) {

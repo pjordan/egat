@@ -15,19 +15,19 @@ public class DeviationFactory {
     private DeviationFactory() {
     }
 
-    public static OutcomeTraversal deviationTraversal(Outcome outcome, StrategicSimulation game, Player player) {
+    public static OutcomeTraversal deviationTraversal(Outcome outcome, StrategicMultiAgentSystem game, Player player) {
         return new DeviationTraversal(outcome,game,player);
     }
 
-    public static SymmetricOutcomeTraversal deviationTraversal(SymmetricOutcome outcome, SymmetricSimulation simulation) {
+    public static SymmetricOutcomeTraversal deviationTraversal(SymmetricOutcome outcome, SymmetricMultiAgentSystem simulation) {
         return new SymmetricDeviationTraversal(outcome,simulation);
     }
     
     static class DeviationTraversal implements OutcomeTraversal {
         Outcome outcome;
-        StrategicSimulation simulation;
+        StrategicMultiAgentSystem simulation;
         Player player;
-        public DeviationTraversal(Outcome outcome, StrategicSimulation simulation, Player player) {
+        public DeviationTraversal(Outcome outcome, StrategicMultiAgentSystem simulation, Player player) {
             this.outcome = outcome;
             this.simulation = simulation;
             this.player = player;
@@ -40,8 +40,8 @@ public class DeviationFactory {
 
     static class SymmetricDeviationTraversal implements SymmetricOutcomeTraversal {
         SymmetricOutcome outcome;
-        SymmetricSimulation simulation;
-        public SymmetricDeviationTraversal(SymmetricOutcome outcome, SymmetricSimulation simulation) {
+        SymmetricMultiAgentSystem simulation;
+        public SymmetricDeviationTraversal(SymmetricOutcome outcome, SymmetricMultiAgentSystem simulation) {
             this.outcome = outcome;
             this.simulation = simulation;
 
@@ -54,14 +54,14 @@ public class DeviationFactory {
 
     static class DeviationIterator implements Iterator<Outcome> {
         Outcome base;
-        StrategicSimulation simulation;
+        StrategicMultiAgentSystem simulation;
         Player[] players;
         Action[] actions;
         Outcome cur;
         Iterator<Action> actionIterator;
         int playerIdx;
 
-        public DeviationIterator(Outcome outcome, StrategicSimulation simulation, Player player) {
+        public DeviationIterator(Outcome outcome, StrategicMultiAgentSystem simulation, Player player) {
             this.base = outcome;
             this.simulation = simulation;
 
@@ -114,13 +114,13 @@ public class DeviationFactory {
 
     static class SymmetricDeviationIterator implements Iterator<SymmetricOutcome> {
         SymmetricOutcome base;
-        SymmetricSimulation simulation;
+        SymmetricMultiAgentSystem simulation;
         SymmetricOutcome cur;
         List<Player> players;
         DefaultSymmetricOutcomeMap<Boolean> outcomeMap;
         Iterator<Outcome> iterator;
 
-        public SymmetricDeviationIterator(SymmetricOutcome outcome, SymmetricSimulation simulation) {
+        public SymmetricDeviationIterator(SymmetricOutcome outcome, SymmetricMultiAgentSystem simulation) {
             this.base = outcome;
             this.simulation = simulation;
             players = new LinkedList<Player>(simulation.players());

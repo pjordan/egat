@@ -6,16 +6,15 @@
  */
 package edu.umich.eecs.ai.egat.game;
 
-import java.util.Set;
-
 /**
- * {@link Game} which is partially defined by a payoff function which maps
+ * {@link MultiAgentSystem} which is partially defined by a payoff function which maps
  *  {@link Profile profiles} to {@link Payoff payoffs}.
  *
+ * @param <T> the payoff type.
  * @author Patrick Jordan
  */
-public interface StrategicGame<T extends PayoffValue> extends StrategicSimulation {
-    
+public interface StrategicGame<T extends PayoffValue> extends StrategicMultiAgentSystem {
+
     /**
      * Get the payoff of the outcome.
      * @param outcome the outcome.
@@ -31,5 +30,5 @@ public interface StrategicGame<T extends PayoffValue> extends StrategicSimulatio
      * invalid.
      */
     Payoff<T> payoff(Profile profile);
-    
+
 }

@@ -7,7 +7,7 @@ import edu.umich.eecs.ai.egat.game.*;
  */
 public class SimpleSymmetricRegressionFactory implements SymmetricRegressionFactory {
     public SymmetricRegression regress(SymmetricSimulationObserver observer) {
-        SymmetricSimulation simulation = observer.getSymmetricSimulation();
+        SymmetricMultiAgentSystem simulation = observer.getSymmetricSimulation();
         DefaultSymmetricGame game = new DefaultSymmetricGame(simulation.getName(), simulation.getDescription());
         BasicStatsSymmetricSimulationObserver basicObserver = new BasicStatsSymmetricSimulationObserverImpl(observer);
 

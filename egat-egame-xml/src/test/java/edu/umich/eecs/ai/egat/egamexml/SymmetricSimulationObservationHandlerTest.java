@@ -8,7 +8,7 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.ParserConfigurationException;
 
-import edu.umich.eecs.ai.egat.game.SymmetricSimulation;
+import edu.umich.eecs.ai.egat.game.SymmetricMultiAgentSystem;
 import edu.umich.eecs.ai.egat.egame.SymmetricSimulationObserver;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class SymmetricSimulationObservationHandlerTest {
 
         parser.parse( SymmetricSimulationObservationHandlerTest.class.getResourceAsStream("/symmetric.xml") , handler);
 
-        SymmetricSimulation simulation = handler.getSimulation();
+        SymmetricMultiAgentSystem simulation = handler.getSimulation();
         SymmetricSimulationObserver observer = handler.getObserver();
 
         Assert.assertEquals(observer.getObservationCount(),2L);

@@ -9,9 +9,11 @@ package edu.umich.eecs.ai.egat.game;
 /**
  * SymmetricGame is a marker interface for a symmetric simulation.
  *
+ * @param <T> the payoff value type.
+ *
  * @author Patrick Jordan
  */
-public interface SymmetricGame<T extends PayoffValue> extends StrategicGame<T>, SymmetricSimulation {
+public interface SymmetricGame<T extends PayoffValue> extends StrategicGame<T>, SymmetricMultiAgentSystem {
 
     /**
      * Get the payoff of the outcome.

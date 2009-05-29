@@ -3,8 +3,6 @@ package edu.umich.eecs.ai.egat.egame;
 import edu.umich.eecs.ai.egat.game.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * @author Patrick Jordan
@@ -12,7 +10,7 @@ import java.util.HashMap;
 public class BasicStatsSymmetricSimulationObserverImpl implements BasicStatsSymmetricSimulationObserver {
     protected SymmetricSimulationObserver baseObserver;
 
-    public BasicStatsSymmetricSimulationObserverImpl(SymmetricSimulation simulation) {
+    public BasicStatsSymmetricSimulationObserverImpl(SymmetricMultiAgentSystem simulation) {
         this(new AbstractSymmetricSimulationObserver(simulation));
     }
 
@@ -31,7 +29,7 @@ public class BasicStatsSymmetricSimulationObserverImpl implements BasicStatsSymm
     }
 
 
-    public SymmetricSimulation getSymmetricSimulation() {
+    public SymmetricMultiAgentSystem getSymmetricSimulation() {
         return baseObserver.getSymmetricSimulation();
     }
 

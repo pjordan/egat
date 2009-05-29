@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public class SymmetricSimulationObservationHandler extends DefaultHandler {
     SymmetricSimulationObserver observer;
-    DefaultSymmetricSimulation simulation;
+    DefaultSymmetricMultiAgentSystem simulation;
     Map<String, Player> playerNames;
     Map<String, Action> actionNames;
     Player[] players;
@@ -81,7 +81,7 @@ public class SymmetricSimulationObservationHandler extends DefaultHandler {
     }
 
     private void handleStartSimulation(Attributes attributes) throws SAXException {
-        simulation = new DefaultSymmetricSimulation();
+        simulation = new DefaultSymmetricMultiAgentSystem();
         simulation.setName(attributes.getValue("name"));
         simulation.setDescription(attributes.getValue("description"));
     }
@@ -163,7 +163,7 @@ public class SymmetricSimulationObservationHandler extends DefaultHandler {
 
     }
 
-    public SymmetricSimulation getSimulation() {
+    public SymmetricMultiAgentSystem getSimulation() {
         return simulation;
     }
 

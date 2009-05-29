@@ -135,7 +135,11 @@ public class SymmetricReplicatorDynamics {
         }
 
         for (int i = 0; i < distribution.length; i++) {
-            next[i] /= sum;
+            if(sum > 0) {
+                next[i] /= sum;
+            } else {
+                next[i] = 1.0/distribution.length;
+            }
         }
 
         return next;
