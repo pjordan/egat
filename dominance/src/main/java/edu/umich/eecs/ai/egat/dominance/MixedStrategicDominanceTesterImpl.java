@@ -6,15 +6,13 @@ import lpsolve.LpSolveException;
 
 import static edu.umich.eecs.ai.egat.dominance.DominanceUtils.*;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * @author Patrick Jordan
  */
 public class MixedStrategicDominanceTesterImpl implements StrategicDominanceTester {
-    public static final double SLACK_TOLERANCE = 0.999999;
+    public static final double SLACK_TOLERANCE = 0.0;
 
     public boolean isDominated(Player player, Action action, StrategicGame game) {
         Player[] players = game.players().toArray(new Player[0]);
@@ -22,9 +20,11 @@ public class MixedStrategicDominanceTesterImpl implements StrategicDominanceTest
 
         double slack = Double.POSITIVE_INFINITY;
 
-        Action[] playerActions = game.getActions(player).toArray(new Action[0]);
+        Set<Action> playerActionSet = new HashSet<Action>(game.getActions(player));
+        playerActionSet.remove(action);
+        Action[] playerActions = playerActionSet.toArray(new Action[0]);
 
-        if(playerActions.length<2) {
+        if(playerActions.length<1) {
             return false;
         }
 
@@ -37,16 +37,16 @@ public class MixedStrategicDominanceTesterImpl implements StrategicDominanceTest
         int playerIndex = indexForPlayer(player, players);
 
         /* create space large enough for one row */
-        int[] colno = new int[playerActions.length];
+        int[] colno = new int[playerActions.length+1];
 
-        for (int i = 0; i < playerActions.length; i++) {
+        for (int i = 0; i < playerActions.length+1; i++) {
             colno[i] = i + 1;
         }
 
-        double[] row = new double[playerActions.length];
+        double[] row = new double[playerActions.length+1];
 
         try {
-            LpSolve lp = LpSolve.makeLp(0, playerActions.length);
+            LpSolve lp = LpSolve.makeLp(0, playerActions.length+1);
 
             if (lp.getLp() == 0) {
                 ret = 1; /* couldn't construct a new model... */
@@ -66,8 +66,12 @@ public class MixedStrategicDominanceTesterImpl implements StrategicDominanceTest
 
                     row[i] = 0.0;
                 }
+
+                lp.setLowbo(playerActions.length+1,Double.NEGATIVE_INFINITY);
             }
 
+
+            row[playerActions.length] = 1.0;
 
             for (int i = 0; i < subGameSize; i++) {
                 double payoffAction = getPayoff(action, subOutcomes.get(i), players, actions, game, playerIndex);
@@ -81,7 +85,7 @@ public class MixedStrategicDominanceTesterImpl implements StrategicDominanceTest
 
                 if (ret == 0) {
                     /* add the row to lpsolve */
-                    lp.addConstraintex(playerActions.length, row, colno, LpSolve.GE, payoffAction);
+                    lp.addConstraintex(playerActions.length+1, row, colno, LpSolve.GE, payoffAction);
                 }
             }
 
@@ -89,11 +93,18 @@ public class MixedStrategicDominanceTesterImpl implements StrategicDominanceTest
             if (ret == 0) {
                 lp.setAddRowmode(false); /* rowmode should be turned off again when done building the model */
 
+                Arrays.fill(row,1.0);
+                row[playerActions.length] = 0.0;
 
-                Arrays.fill(row, 1.0);
+                /* add the row to lpsolve */
+                lp.addConstraintex(playerActions.length, row, colno, LpSolve.EQ, 1.0);
+
+                Arrays.fill(row, 0);
+
+                row[playerActions.length] = 1.0;
 
                 /* set the objective in lpsolve */
-                lp.setObjFnex(playerActions.length, row, colno);
+                lp.setObjFnex(playerActions.length+1, row, colno);
             }
 
             if (ret == 0)
@@ -101,7 +112,7 @@ public class MixedStrategicDominanceTesterImpl implements StrategicDominanceTest
             {
                 /* set the object direction to maximize */
                 lp.setMinim();
-
+                
                 /* I only want to see important messages on screen while solving */
                 lp.setVerbose(LpSolve.IMPORTANT);
 
@@ -149,16 +160,16 @@ public class MixedStrategicDominanceTesterImpl implements StrategicDominanceTest
         int playerIndex = indexForPlayer(player, players);
 
         /* create space large enough for one row */
-        int[] colno = new int[playerActions.length];
+        int[] colno = new int[playerActions.length+1];
 
-        for (int i = 0; i < playerActions.length; i++) {
+        for (int i = 0; i < playerActions.length+1; i++) {
             colno[i] = i + 1;
         }
 
-        double[] row = new double[playerActions.length];
+        double[] row = new double[playerActions.length+1];
 
         try {
-            LpSolve lp = LpSolve.makeLp(0, playerActions.length);
+            LpSolve lp = LpSolve.makeLp(0, playerActions.length+1);
 
             if (lp.getLp() == 0) {
                 ret = 1; /* couldn't construct a new model... */
@@ -178,9 +189,13 @@ public class MixedStrategicDominanceTesterImpl implements StrategicDominanceTest
 
                     row[i] = 0.0;
                 }
+
+                lp.setLowbo(playerActions.length+1,Double.NEGATIVE_INFINITY);
             }
 
 
+            row[playerActions.length] = 1.0;
+            
             for (int i = 0; i < subGameSize; i++) {
                 double payoffAction = getPayoff(strategy, subOutcomes.get(i), players, strategies, game, playerIndex);
 
@@ -193,7 +208,7 @@ public class MixedStrategicDominanceTesterImpl implements StrategicDominanceTest
 
                 if (ret == 0) {
                     /* add the row to lpsolve */
-                    lp.addConstraintex(playerActions.length, row, colno, LpSolve.GE, payoffAction);
+                    lp.addConstraintex(playerActions.length+1, row, colno, LpSolve.GE, payoffAction);
                 }
             }
 
@@ -202,10 +217,19 @@ public class MixedStrategicDominanceTesterImpl implements StrategicDominanceTest
                 lp.setAddRowmode(false); /* rowmode should be turned off again when done building the model */
 
 
-                Arrays.fill(row, 1.0);
+                Arrays.fill(row,1.0);
+                row[playerActions.length] = 0.0;
+
+                /* add the row to lpsolve */
+                lp.addConstraintex(playerActions.length, row, colno, LpSolve.EQ, 1.0);
+
+                Arrays.fill(row, 0);
+
+                row[playerActions.length] = 1.0;
 
                 /* set the objective in lpsolve */
-                lp.setObjFnex(playerActions.length, row, colno);
+                lp.setObjFnex(playerActions.length+1, row, colno);
+                
             }
 
             if (ret == 0)

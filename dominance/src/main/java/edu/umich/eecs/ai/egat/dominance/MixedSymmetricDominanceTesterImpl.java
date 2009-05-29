@@ -3,9 +3,7 @@ package edu.umich.eecs.ai.egat.dominance;
 import edu.umich.eecs.ai.egat.game.*;
 import static edu.umich.eecs.ai.egat.dominance.DominanceUtils.*;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import lpsolve.LpSolve;
 import lpsolve.LpSolveException;
@@ -14,7 +12,7 @@ import lpsolve.LpSolveException;
  * @author Patrick Jordan
  */
 public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTester {
-    public static final double SLACK_TOLERANCE = 0.999999;
+    public static final double SLACK_TOLERANCE = 0.0;
 
     public boolean isDominated(Action action, SymmetricGame game) {
         Player[] players = game.players().toArray(new Player[0]);
@@ -22,9 +20,11 @@ public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTest
 
         double slack = Double.POSITIVE_INFINITY;
 
-        Action[] playerActions = game.getActions().toArray(new Action[0]);
+        Set<Action> playerActionSet = new HashSet<Action>(game.getActions());
+        playerActionSet.remove(action);
+        Action[] playerActions = playerActionSet.toArray(new Action[0]);
 
-        if(playerActions.length<2) {
+        if(playerActions.length<1) {
             return false;
         }
         
@@ -38,16 +38,16 @@ public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTest
         int playerIndex = 0;
 
         /* create space large enough for one row */
-        int[] colno = new int[playerActions.length];
+        int[] colno = new int[playerActions.length+1];
 
-        for (int i = 0; i < playerActions.length; i++) {
+        for (int i = 0; i < playerActions.length+1; i++) {
             colno[i] = i + 1;
         }
 
-        double[] row = new double[playerActions.length];
+        double[] row = new double[playerActions.length+1];
 
         try {
-            LpSolve lp = LpSolve.makeLp(0, playerActions.length);
+            LpSolve lp = LpSolve.makeLp(0, playerActions.length+1);
 
             if (lp.getLp() == 0) {
                 ret = 1; /* couldn't construct a new model... */
@@ -67,7 +67,12 @@ public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTest
 
                     row[i] = 0.0;
                 }
+
+                lp.setLowbo(playerActions.length+1,Double.NEGATIVE_INFINITY);
             }
+
+
+            row[playerActions.length] = 1.0;
 
 
             for (int i = 0; i < subGameSize; i++) {
@@ -82,7 +87,7 @@ public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTest
 
                 if (ret == 0) {
                     /* add the row to lpsolve */
-                    lp.addConstraintex(playerActions.length, row, colno, LpSolve.GE, payoffAction);
+                    lp.addConstraintex(playerActions.length+1, row, colno, LpSolve.GE, payoffAction);
                 }
             }
 
@@ -91,10 +96,19 @@ public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTest
                 lp.setAddRowmode(false); /* rowmode should be turned off again when done building the model */
 
 
-                Arrays.fill(row, 1.0);
+                Arrays.fill(row,1.0);
+                row[playerActions.length] = 0.0;
+
+                /* add the row to lpsolve */
+                lp.addConstraintex(playerActions.length, row, colno, LpSolve.EQ, 1.0);
+
+                Arrays.fill(row, 0);
+
+                row[playerActions.length] = 1.0;
 
                 /* set the objective in lpsolve */
-                lp.setObjFnex(playerActions.length, row, colno);
+                lp.setObjFnex(playerActions.length+1, row, colno);
+                
             }
 
             if (ret == 0) {
@@ -150,16 +164,16 @@ public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTest
         int playerIndex = 0;
 
         /* create space large enough for one row */
-        int[] colno = new int[playerActions.length];
+        int[] colno = new int[playerActions.length+1];
 
-        for (int i = 0; i < playerActions.length; i++) {
+        for (int i = 0; i < playerActions.length+1; i++) {
             colno[i] = i + 1;
         }
 
-        double[] row = new double[playerActions.length];
+        double[] row = new double[playerActions.length+1];
 
         try {
-            LpSolve lp = LpSolve.makeLp(0, playerActions.length);
+            LpSolve lp = LpSolve.makeLp(0, playerActions.length+1);
 
             if (lp.getLp() == 0) {
                 ret = 1; /* couldn't construct a new model... */
@@ -179,7 +193,12 @@ public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTest
 
                     row[i] = 0.0;
                 }
+
+                lp.setLowbo(playerActions.length+1,Double.NEGATIVE_INFINITY);
             }
+
+
+            row[playerActions.length] = 1.0;
 
 
             for (int i = 0; i < subGameSize; i++) {
@@ -194,7 +213,7 @@ public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTest
 
                 if (ret == 0) {
                     /* add the row to lpsolve */
-                    lp.addConstraintex(playerActions.length, row, colno, LpSolve.GE, payoffAction);
+                    lp.addConstraintex(playerActions.length+1, row, colno, LpSolve.GE, payoffAction);
                 }
             }
 
@@ -203,10 +222,19 @@ public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTest
                 lp.setAddRowmode(false); /* rowmode should be turned off again when done building the model */
 
 
-                Arrays.fill(row, 1.0);
+                Arrays.fill(row,1.0);
+                row[playerActions.length] = 0.0;
+
+                /* add the row to lpsolve */
+                lp.addConstraintex(playerActions.length, row, colno, LpSolve.EQ, 1.0);
+
+                Arrays.fill(row, 0);
+
+                row[playerActions.length] = 1.0;
 
                 /* set the objective in lpsolve */
-                lp.setObjFnex(playerActions.length, row, colno);
+                lp.setObjFnex(playerActions.length+1, row, colno);
+                
             }
 
             if (ret == 0)

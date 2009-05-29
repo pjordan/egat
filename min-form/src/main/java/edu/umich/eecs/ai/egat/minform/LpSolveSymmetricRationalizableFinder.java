@@ -220,7 +220,6 @@ public class LpSolveSymmetricRationalizableFinder implements SymmetricRationaliz
         if (ret == 0) {
             lp.setAddRowmode(false); /* rowmode should be turned off again when done building the model */
 
-
             Arrays.fill(row, 0);
 
             row[subGameSize] = 1.0;

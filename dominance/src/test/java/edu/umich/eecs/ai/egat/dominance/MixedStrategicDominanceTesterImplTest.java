@@ -41,7 +41,7 @@ public class MixedStrategicDominanceTesterImplTest {
         Action d = Games.createAction("d");
 
         assertTrue(mixedStrategicDominanceTesterImpl.isDominated(alice,c,game));
-        assertFalse(mixedStrategicDominanceTesterImpl.isDominated(alice,d,game));
+        assertFalse(mixedStrategicDominanceTesterImpl.isDominated(alice,d,game));        
     }
 
 
