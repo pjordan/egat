@@ -1,17 +1,20 @@
 package edu.umich.eecs.ai.egat.game;
 
-import junit.framework.TestCase;
+import org.junit.*;
+import static org.junit.Assert.*;
+
 
 /**
  * @author Patrick Jordan
  */
-public class GameTest extends TestCase {
+public class GameTest {
     private Player player1;
     private Player player2;
     private Player player3;
     private MutableMultiAgentSystem game;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         player1 = Games.createPlayer("row");
         player2 = Games.createPlayer("col");
         player3 = Games.createPlayer("row");
@@ -19,18 +22,22 @@ public class GameTest extends TestCase {
         game = new DefaultMultiAgentSystem("name","description");
     }
 
+    @Test
     public void testNameEquility() {
         assertEquals(game.getName(),"name");
     }
 
+    @Test
     public void testDescriptionEquility() {
         assertEquals(game.getDescription(),"description");
     }
 
+    @Test
     public void testPlayersNullity() {
         assertNotNull(game.players());
     }
 
+    @Test
     public void testAddPlayers() {
         MutableMultiAgentSystem emptyGame = new DefaultMultiAgentSystem("name","description");
 
@@ -49,6 +56,7 @@ public class GameTest extends TestCase {
         assertEquals(emptyGame.players().size(),2);
     }
 
+    @Test
     public void testRemovePlayers() {
         MutableMultiAgentSystem emptyGame = new DefaultMultiAgentSystem("name","description");
 

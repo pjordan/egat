@@ -1,16 +1,17 @@
 package edu.umich.eecs.ai.egat.game;
 
-import junit.framework.TestCase;
-
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 /**
  * @author Patrick Jordan
  */
-public class SymmetricGameTest extends TestCase {
+public class SymmetricGameTest {
     private Player player1;
     private Player player2;
     private Player player3;
@@ -27,7 +28,8 @@ public class SymmetricGameTest extends TestCase {
 
     private Profile profile;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         player1 = Games.createPlayer("row");
         player2 = Games.createPlayer("col");
         player3 = Games.createPlayer("eve");
@@ -64,6 +66,7 @@ public class SymmetricGameTest extends TestCase {
 
     }
 
+    @Test
     public void testPlayerActions() {
         Set<Action> playerActions = new HashSet<Action>();
 
@@ -75,6 +78,7 @@ public class SymmetricGameTest extends TestCase {
         assertEquals(game.getActions(), playerActions);
     }
 
+    @Test
     public void testPayoffs() {
         Payoff payoff11 = game.payoff(cell11);
         Payoff payoff12 = game.payoff(cell12);
@@ -94,6 +98,7 @@ public class SymmetricGameTest extends TestCase {
         assertEquals(payoff22.getPayoff(player2).getValue(), 1.0, 0.1);
     }
 
+    @Test
     public void testTraversal() {
         Set<Outcome> set = new HashSet<Outcome>();
 
@@ -104,25 +109,23 @@ public class SymmetricGameTest extends TestCase {
         assertEquals(3, set.size());
     }
 
+    @Test
     public void testMinPayoff() {
         assertEquals(0.0, PayoffFactory.minPayoff(game).doubleValue(), 0.1);
     }
 
-
+    @Test(expected = NonexistentPayoffException.class)
     public void testNonexistentPayoff() {
-        try {
-            game.payoff(Games.createOutcome(new Player[]{player1, player2},
-                    new Action[]{Games.createAction("a"), Games.createAction("b")}));
-            assertTrue(false);
-        } catch (NonexistentPayoffException e) {
-            assertTrue(true);
-        }
+        game.payoff(Games.createOutcome(new Player[]{player1, player2},
+                new Action[]{Games.createAction("a"), Games.createAction("b")}));
     }
 
+    @Test
     public void testMaxPayoff() {
         assertEquals(5.0, PayoffFactory.maxPayoff(game).doubleValue(), 0.1);
     }
 
+    @Test
     public void testMixedPayoff() {
         Payoff payoff = game.payoff(profile);
 

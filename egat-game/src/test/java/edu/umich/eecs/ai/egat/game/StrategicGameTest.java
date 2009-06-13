@@ -5,10 +5,13 @@ import junit.framework.TestCase;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.*;
+import static org.junit.Assert.*;
+
 /**
  * @author Patrick Jordan
  */
-public class StrategicGameTest extends TestCase {
+public class StrategicGameTest {
     private Player player1;
     private Player player2;
     private Player player3;
@@ -25,7 +28,8 @@ public class StrategicGameTest extends TestCase {
 
     private Profile profile;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         player1 = Games.createPlayer("row");
         player2 = Games.createPlayer("col");
         player3 = Games.createPlayer("eve");
@@ -58,6 +62,7 @@ public class StrategicGameTest extends TestCase {
 
     }
 
+    @Test
     public void testPlayerActions() {
         Set<Action> playerActions = new HashSet<Action>();
 
@@ -72,6 +77,7 @@ public class StrategicGameTest extends TestCase {
 
     }
 
+    @Test
     public void testPutPlayerActions() {
         Set<Action> playerActions = new HashSet<Action>();
 
@@ -81,6 +87,7 @@ public class StrategicGameTest extends TestCase {
         assertNull(game.getActions(player3));
     }
 
+    @Test
     public void testPayoffs() {
         Payoff payoff11 = game.payoff(cell11);
         Payoff payoff12 = game.payoff(cell12);
@@ -100,6 +107,7 @@ public class StrategicGameTest extends TestCase {
         assertEquals(payoff22.getPayoff(player2).getValue(),1.0,0.1);
     }
 
+    @Test
     public void testTraversal() {
         Set<Outcome> set = new HashSet<Outcome>();
 
@@ -110,14 +118,17 @@ public class StrategicGameTest extends TestCase {
         assertEquals(4,set.size());
     }
 
+    @Test
     public void testMinPayoff() {
         assertEquals(0.0,PayoffFactory.minPayoff(game).doubleValue(),0.1);
     }
 
+    @Test
     public void testMaxPayoff() {
         assertEquals(5.0,PayoffFactory.maxPayoff(game).doubleValue(),0.1);
     }
 
+    @Test
     public void testMixedPayoff() {
         Payoff payoff = game.payoff(profile);
         
