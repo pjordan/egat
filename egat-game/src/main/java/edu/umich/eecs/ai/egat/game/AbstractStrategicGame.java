@@ -39,7 +39,7 @@ public abstract class AbstractStrategicGame<T extends PayoffValue> extends Defau
      * @param profile the profile.
      * @return the payoff of a given profile.
      */
-    public final Payoff payoff(final Profile profile) {
+    public final Payoff payoff(final Profile profile) throws NonexistentPayoffException {
         return Games.computeStrategicPayoffUsingReduction(profile, this);
     }
 }

@@ -106,6 +106,8 @@ public class NEResponseCommandHandler extends AbstractGameCommandHandler {
             Strategy strategy = handler.getStrategy();
 
             findNEResponse(strategy, game);
+        } catch (NonexistentPayoffException e) {
+            System.err.println(String.format("Could not calculate regret. %s", e.getMessage()));
         } catch (ParserConfigurationException e) {
             throw new CommandProcessingException(e);
         } catch (SAXException e) {

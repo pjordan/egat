@@ -18,14 +18,22 @@ public class RegretCommandHandler extends AbstractGameCommandHandler {
     protected void processSymmetricGame(MutableSymmetricGame game) throws CommandProcessingException {
         SymmetricRegretWriter writer = new SymmetricRegretWriter(System.out);
 
-        writer.writeRegret(game);
+        try {
+            writer.writeRegret(game);
+        } catch (NonexistentPayoffException e) {
+            System.err.println(String.format("Could not calculate regret. %s", e.getMessage()));
+        }
 
     }
 
     protected void processStrategicGame(MutableStrategicGame game) throws CommandProcessingException {
         StrategicRegretWriter writer = new StrategicRegretWriter(System.out);
 
-        writer.writeRegret(game);
+        try {
+            writer.writeRegret(game);
+        } catch (NonexistentPayoffException e) {
+            System.err.println(String.format("Could not calculate regret. %s", e.getMessage()));
+        }
     }
 
     @Override

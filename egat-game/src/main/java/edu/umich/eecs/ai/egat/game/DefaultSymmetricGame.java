@@ -35,16 +35,16 @@ public class DefaultSymmetricGame<T extends PayoffValue> extends AbstractStrateg
         return getActions();
     }
 
-    public SymmetricPayoff<T> payoff(Outcome outcome) {
+    public SymmetricPayoff<T> payoff(Outcome outcome) throws NonexistentPayoffException {
         SymmetricOutcome so = Games.createSymmetricOutcome(outcome);
 
         if (so==null)
-            return null;
+            throw new NonexistentPayoffException(outcome);
         
         Map<Action,T> payoffs = outcomePayoffs.get(so.actionEntrySet());
 
         if( payoffs==null)
-            return null;
+            throw new NonexistentPayoffException(outcome);
 
         return PayoffFactory.createSymmetricPayoff(payoffs,outcome);
     }

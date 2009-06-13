@@ -21,5 +21,5 @@ public interface SymmetricGame<T extends PayoffValue> extends StrategicGame<T>, 
      * @return the payoff of the outcome, <code>null</code> if the outcome is
      * invalid.
      */
-    SymmetricPayoff<T> payoff(Outcome outcome);
+    SymmetricPayoff<T> payoff(Outcome outcome) throws NonexistentPayoffException;
 }

@@ -4,6 +4,7 @@ import edu.umich.eecs.ai.egat.cli.AbstractGameCommandHandler;
 import edu.umich.eecs.ai.egat.cli.CommandProcessingException;
 import edu.umich.eecs.ai.egat.game.MutableStrategicGame;
 import edu.umich.eecs.ai.egat.game.MutableSymmetricGame;
+import edu.umich.eecs.ai.egat.game.NonexistentPayoffException;
 import org.apache.commons.cli2.builder.CommandBuilder;
 
 /**
@@ -16,16 +17,24 @@ public class RobustRegretCommandHandler extends AbstractGameCommandHandler {
     }
 
     protected void processSymmetricGame(MutableSymmetricGame game) throws CommandProcessingException {
-        SymmetricRobustRegretWriter writer = new SymmetricRobustRegretWriter(System.out);
+        try {
+            SymmetricRobustRegretWriter writer = new SymmetricRobustRegretWriter(System.out);
 
-        writer.writeRegret(game);
 
+            writer.writeRegret(game);
+        } catch (NonexistentPayoffException e) {
+            System.err.println(String.format("Could not calculate regret. %s", e.getMessage()));
+        }
     }
 
     protected void processStrategicGame(MutableStrategicGame game) throws CommandProcessingException {
-        StrategicRobustRegretWriter writer = new StrategicRobustRegretWriter(System.out);
+        try {
+            StrategicRobustRegretWriter writer = new StrategicRobustRegretWriter(System.out);
 
-        writer.writeRegret(game);
+            writer.writeRegret(game);
+        } catch (NonexistentPayoffException e) {
+            System.err.println(String.format("Could not calculate regret. %s", e.getMessage()));
+        }
     }
 
     @Override

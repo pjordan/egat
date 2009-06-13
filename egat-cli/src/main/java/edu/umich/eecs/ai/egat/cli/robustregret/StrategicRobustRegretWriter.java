@@ -18,8 +18,8 @@ public class StrategicRobustRegretWriter {
     public PrintStream writeRegret(StrategicGame game) {
         writeHeader();
 
-        for(Player player : game.players()) {
-            writeRegret(player, game );
+        for (Player player : game.players()) {
+            writeRegret(player, game);
         }
 
 
@@ -31,8 +31,8 @@ public class StrategicRobustRegretWriter {
     protected PrintStream writeRegret(Player player, StrategicGame game) {
         writePlayerHeader(player);
 
-        for(Action action : game.getActions(player)) {
-            writeRegret(action, Games.robustRegret(player, action, game) );
+        for (Action action : game.getActions(player)) {
+            writeRegret(action, Games.robustRegret(player, action, game));
         }
 
         writePlayerFooter(player);
@@ -52,7 +52,7 @@ public class StrategicRobustRegretWriter {
 
         return printStream;
     }
-   
+
     protected PrintStream writeFooter() {
         printStream.print("</players>");
 

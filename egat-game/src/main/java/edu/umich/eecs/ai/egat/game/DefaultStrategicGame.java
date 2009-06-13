@@ -35,7 +35,12 @@ public class DefaultStrategicGame<T extends PayoffValue> extends AbstractStrateg
     }
 
     public Payoff<T> payoff(Outcome outcome) {
-        return outcomeMap.get(outcome);
+        Payoff<T> payoff = outcomeMap.get(outcome);
+
+        if(payoff==null)
+            throw new NonexistentPayoffException(outcome);
+
+        return payoff;
     }
 
     public void build() {

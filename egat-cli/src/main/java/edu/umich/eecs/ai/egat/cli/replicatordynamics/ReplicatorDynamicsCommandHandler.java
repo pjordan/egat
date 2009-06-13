@@ -37,24 +37,24 @@ public class ReplicatorDynamicsCommandHandler extends AbstractGameCommandHandler
         final ArgumentBuilder argumentBuilder = new ArgumentBuilder();
 
         verboseOption = defaultOptionBuilder.withShortName("v")
-                                            .withLongName("verbose")
-                                            .withDescription("prints info for each iteration").create();
+                .withLongName("verbose")
+                .withDescription("prints info for each iteration").create();
 
         groupBuilder.withOption(verboseOption);
 
         toleranceOption = defaultOptionBuilder.withLongName("tolerance")
-                                              .withArgument(argumentBuilder.withMinimum(1)
-                                                                           .withMaximum(1)
-                                                                           .withName("tol").create())
-                                              .withDescription("minimum update L-infinity distance").create();
+                .withArgument(argumentBuilder.withMinimum(1)
+                        .withMaximum(1)
+                        .withName("tol").create())
+                .withDescription("minimum update L-infinity distance").create();
 
         groupBuilder.withOption(toleranceOption);
 
         maxIterationOption = defaultOptionBuilder.withLongName("max-iterations")
-                                                 .withArgument(argumentBuilder.withMinimum(1)
-                                                                              .withMaximum(1)
-                                                                              .withName("i").create())
-                                                 .withDescription("maximum iterations to run").create();
+                .withArgument(argumentBuilder.withMinimum(1)
+                        .withMaximum(1)
+                        .withName("i").create())
+                .withDescription("maximum iterations to run").create();
 
         groupBuilder.withOption(maxIterationOption);
     }
@@ -70,27 +70,31 @@ public class ReplicatorDynamicsCommandHandler extends AbstractGameCommandHandler
     }
 
     protected void processSymmetricGame(MutableSymmetricGame game) throws CommandProcessingException {
-        PrintStream printStream = null;
-
-        if(verbose) {
-            printStream = System.err;
-        }
-
-
-        SymmetricReplicatorDynamics symmetricReplicatorDynamics = new SymmetricReplicatorDynamics(tolerance, maxIteration, printStream);
-
-        Strategy strategy = symmetricReplicatorDynamics.run(game, null);
-
-        Player[] players = game.players().toArray(new Player[0]);
-        Strategy[] strategies = new Strategy[players.length];
-        Arrays.fill(strategies, strategy);
-
-        ProfileWriter writer = new ProfileWriter(System.out);
         try {
-            writer.write(Games.createProfile(players,strategies));
-        } catch (IOException e) {
-            throw new CommandProcessingException(e);
+            PrintStream printStream = null;
+
+            if (verbose) {
+                printStream = System.err;
+            }
+
+
+            SymmetricReplicatorDynamics symmetricReplicatorDynamics = new SymmetricReplicatorDynamics(tolerance, maxIteration, printStream);
+            Strategy strategy = symmetricReplicatorDynamics.run(game, null);
+            Player[] players = game.players().toArray(new Player[0]);
+            Strategy[] strategies = new Strategy[players.length];
+            Arrays.fill(strategies, strategy);
+
+            ProfileWriter writer = new ProfileWriter(System.out);
+            try {
+                writer.write(Games.createProfile(players, strategies));
+            } catch (IOException e) {
+                throw new CommandProcessingException(e);
+            }
+        } catch (NonexistentPayoffException e) {
+            System.err.println(String.format("Could not calculate regret. %s", e.getMessage()));
         }
+
+
     }
 
     protected void processStrategicGame(MutableStrategicGame game) throws CommandProcessingException {

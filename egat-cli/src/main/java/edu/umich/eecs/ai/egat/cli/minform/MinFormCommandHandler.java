@@ -5,6 +5,7 @@ import edu.umich.eecs.ai.egat.cli.CommandProcessingException;
 import edu.umich.eecs.ai.egat.game.SymmetricGame;
 import edu.umich.eecs.ai.egat.game.MutableStrategicGame;
 import edu.umich.eecs.ai.egat.game.MutableSymmetricGame;
+import edu.umich.eecs.ai.egat.game.NonexistentPayoffException;
 import edu.umich.eecs.ai.egat.minform.LpSolveMinimumFormationFinder;
 import edu.umich.eecs.ai.egat.gamexml.SymmetricGameWriter;
 import org.apache.commons.cli2.builder.CommandBuilder;
@@ -43,20 +44,23 @@ public class MinFormCommandHandler extends AbstractGameCommandHandler {
     }
 
     protected void processSymmetricGame(MutableSymmetricGame game) throws CommandProcessingException {
-        SymmetricGameWriter writer = new SymmetricGameWriter(System.out, !all);
-
-        LpSolveMinimumFormationFinder finder = new LpSolveMinimumFormationFinder();
-
         try {
-            if(all) {
+            SymmetricGameWriter writer = new SymmetricGameWriter(System.out, !all);
+
+            LpSolveMinimumFormationFinder finder = new LpSolveMinimumFormationFinder();
+
+
+            if (all) {
                 System.out.print("<?xml version=\"1.0\" encoding=\"utf-8\"?><nfgs>");
-                for(SymmetricGame form : finder.findAllMinimumFormations(game)) {
+                for (SymmetricGame form : finder.findAllMinimumFormations(game)) {
                     writer.write(form);
                 }
                 System.out.print("</nfgs>");
             } else {
                 writer.write(finder.findMinimumFormation(game));
             }
+        } catch (NonexistentPayoffException e) {
+            System.err.println(String.format("Could not calculate regret. %s", e.getMessage()));
         } catch (IOException e) {
             throw new CommandProcessingException(e);
         }

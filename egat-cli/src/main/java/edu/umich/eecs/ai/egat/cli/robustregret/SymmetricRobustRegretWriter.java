@@ -17,9 +17,10 @@ public class SymmetricRobustRegretWriter {
     public PrintStream writeRegret(SymmetricGame game) {
         writeHeader();
 
-        for(Action action : game.getActions()) {
-            writeRegret(action, Games.robustRegret(action, game) );
+        for (Action action : game.getActions()) {
+            writeRegret(action, Games.robustRegret(action, game));
         }
+
 
         writeFooter().flush();
 

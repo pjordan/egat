@@ -28,8 +28,8 @@ public class IEDSCommandHandler extends AbstractGameCommandHandler {
         final DefaultOptionBuilder defaultOptionBuilder = new DefaultOptionBuilder();
 
         pureOption = defaultOptionBuilder.withShortName("p")
-                                         .withLongName("pure")
-                                         .withDescription("pure stategy dominance").create();
+                .withLongName("pure")
+                .withDescription("pure stategy dominance").create();
 
         groupBuilder.withOption(pureOption);
     }
@@ -46,41 +46,47 @@ public class IEDSCommandHandler extends AbstractGameCommandHandler {
 
     protected void processSymmetricGame(MutableSymmetricGame game) throws CommandProcessingException {
 
-        SymmetricDominanceTester dominanceTester = pure ? new PureSymmetricDominanceTesterImpl() : new MixedSymmetricDominanceTesterImpl();
-
-        SymmetricIteratedDominatedStrategiesEliminator eliminator =
-                new SymmetricIteratedDominatedStrategiesEliminatorImpl(dominanceTester);
-
-        eliminator.eliminateDominatedStrategies(game);
-
-        SymmetricGameWriter writer = new SymmetricGameWriter(System.out);
-
         try {
-            writer.write(game);
-        } catch (IOException e) {
-            throw new CommandProcessingException(e);
-        }
+            SymmetricDominanceTester dominanceTester = pure ? new PureSymmetricDominanceTesterImpl() : new MixedSymmetricDominanceTesterImpl();
 
+            SymmetricIteratedDominatedStrategiesEliminator eliminator =
+                    new SymmetricIteratedDominatedStrategiesEliminatorImpl(dominanceTester);
+
+            eliminator.eliminateDominatedStrategies(game);
+
+            SymmetricGameWriter writer = new SymmetricGameWriter(System.out);
+
+            try {
+                writer.write(game);
+            } catch (IOException e) {
+                throw new CommandProcessingException(e);
+            }
+        } catch (NonexistentPayoffException e) {
+            System.err.println(String.format("Could not calculate regret. %s", e.getMessage()));
+        }
     }
 
     protected void processStrategicGame(MutableStrategicGame game) throws CommandProcessingException {
 
 
-        StrategicDominanceTester dominanceTester = pure ? new PureStrategicDominanceTesterImpl() : new MixedStrategicDominanceTesterImpl();
-
-        StrategicIteratedDominatedStrategiesEliminator eliminator =
-                new StrategicIteratedDominatedStrategiesEliminatorImpl(dominanceTester);
-
-        eliminator.eliminateDominatedStrategies(game);
-
-        StrategicGameWriter writer = new StrategicGameWriter(System.out);
-
         try {
-            writer.write(game);
-        } catch (IOException e) {
-            throw new CommandProcessingException(e);
-        }
+            StrategicDominanceTester dominanceTester = pure ? new PureStrategicDominanceTesterImpl() : new MixedStrategicDominanceTesterImpl();
 
+            StrategicIteratedDominatedStrategiesEliminator eliminator =
+                    new StrategicIteratedDominatedStrategiesEliminatorImpl(dominanceTester);
+
+            eliminator.eliminateDominatedStrategies(game);
+
+            StrategicGameWriter writer = new StrategicGameWriter(System.out);
+
+            try {
+                writer.write(game);
+            } catch (IOException e) {
+                throw new CommandProcessingException(e);
+            }
+        } catch (NonexistentPayoffException e) {
+            System.err.println(String.format("Could not calculate regret. %s", e.getMessage()));
+        }
     }
 
     @Override

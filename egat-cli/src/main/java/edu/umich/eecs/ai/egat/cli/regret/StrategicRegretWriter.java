@@ -19,7 +19,7 @@ public class StrategicRegretWriter {
         writeHeader();
 
         for (Outcome outcome : Games.traversal(game)) {
-            writeRegret(outcome, Games.regret(outcome, game) );
+            writeRegret(outcome, Games.regret(outcome, game));
         }
 
         writeFooter().flush();
@@ -28,15 +28,19 @@ public class StrategicRegretWriter {
     }
 
     protected PrintStream writeRegret(Outcome outcome, double regret) {
-        printStream.print(String.format("<profile regret=\"%s\">", regret));
 
-        for (Map.Entry<Player, Action> entry : outcome.entrySet()) {
-            printStream.print(String.format("<outcome player=\"%s\"  action=\"%s\" />", entry.getKey(), entry.getValue()));
-        }
+            printStream.print(String.format("<profile regret=\"%s\">", regret));
 
-        printStream.print("</profile>");
+
+            for (Map.Entry<Player, Action> entry : outcome.entrySet()) {
+                printStream.print(String.format("<outcome player=\"%s\"  action=\"%s\" />", entry.getKey(), entry.getValue()));
+            }
+
+            printStream.print("</profile>");
+        
 
         return printStream;
+
     }
 
     protected PrintStream writeHeader() {

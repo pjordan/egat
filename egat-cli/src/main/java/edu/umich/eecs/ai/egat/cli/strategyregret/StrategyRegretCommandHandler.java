@@ -117,6 +117,8 @@ public class StrategyRegretCommandHandler extends AbstractGameCommandHandler {
             }
 
             findRegret(profile, game);
+        } catch (NonexistentPayoffException e) {
+            System.err.println(String.format("Could not calculate regret. %s", e.getMessage()));
         } catch (FileNotFoundException e) {
             throw new CommandProcessingException(e);
         } catch (ParserConfigurationException e) {
@@ -162,6 +164,8 @@ public class StrategyRegretCommandHandler extends AbstractGameCommandHandler {
             }
 
             findRegret(profile, game);
+        } catch (NonexistentPayoffException e) {
+            System.err.println(String.format("Could not calculate regret. %s", e.getMessage()));
         } catch (FileNotFoundException e) {
             throw new CommandProcessingException(e);
         } catch (ParserConfigurationException e) {

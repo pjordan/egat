@@ -21,7 +21,7 @@ public interface StrategicGame<T extends PayoffValue> extends StrategicMultiAgen
      * @return the payoff of the outcome, <code>null</code> if the outcome is
      * invalid.
      */
-    Payoff<T> payoff(Outcome outcome);
+    Payoff<T> payoff(Outcome outcome) throws NonexistentPayoffException;
 
     /**
      * Get the payoff of the profile.

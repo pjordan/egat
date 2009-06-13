@@ -1,10 +1,7 @@
 package edu.umich.eecs.ai.egat.cli.regret;
 
 
-import edu.umich.eecs.ai.egat.game.SymmetricGame;
-import edu.umich.eecs.ai.egat.game.SymmetricOutcome;
-import edu.umich.eecs.ai.egat.game.Games;
-import edu.umich.eecs.ai.egat.game.Action;
+import edu.umich.eecs.ai.egat.game.*;
 
 import java.io.PrintStream;
 import java.util.Map;
@@ -23,7 +20,7 @@ public class SymmetricRegretWriter {
         writeHeader();
 
         for (SymmetricOutcome outcome : Games.symmetricTraversal(game)) {
-            writeRegret(outcome, Games.regret(outcome, game) );
+            writeRegret(outcome, Games.regret(outcome, game));
         }
 
         writeFooter().flush();
