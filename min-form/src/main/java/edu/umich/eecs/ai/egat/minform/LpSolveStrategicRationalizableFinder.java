@@ -1,6 +1,6 @@
 /*
- * LpSolveSymmetricRationalizableFinder.java
- *
+ * LpSolveStrategicRationalizableFinder.java
+ * 
  * Copyright (C) 2006-2009 Patrick R. Jordan
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,35 +22,39 @@ import edu.umich.eecs.ai.egat.game.*;
 
 import java.util.*;
 
-import lpsolve.LpSolve;
 import lpsolve.LpSolveException;
+import lpsolve.LpSolve;
 
 /**
- * @author Patrick Jordan
+ * @author Patrick R. Jordan
  */
-public class LpSolveSymmetricRationalizableFinder implements SymmetricRationalizableFinder {
+public class LpSolveStrategicRationalizableFinder implements StrategicRationalizableFinder {
+    public Set<Action> findRationalizable(Player player, StrategicMultiAgentSystem restrictedActions, StrategicGame game) {
 
-    public Set<Action> findRationalizable(Set<Action> actions, SymmetricGame game) {
-        MutableSymmetricMultiAgentSystem subGame = new DefaultSymmetricMultiAgentSystem();
-        Set<Action> others = new HashSet<Action>(game.getActions());
+        Set<Player> otherPlayers = new HashSet<Player>(game.players());
+
+        otherPlayers.remove(player);
+
+        StrategicMultiAgentSystem subGame = new PlayerReducedStrategicMultiAgentSystem(game, otherPlayers);
+
+        Set<Action> others = new HashSet<Action>(game.getActions(player));
 
         Player[] allPlayers = game.players().toArray(new Player[0]);
+
         Action[] playerActions = new Action[allPlayers.length];
 
         Set<Action> rationalizableActions = new HashSet<Action>();
 
-        for (int i = 1; i < allPlayers.length; i++) {
-            subGame.addPlayer(allPlayers[i]);
-        }
 
-        for (Action action : actions) {
-            subGame.addAction(action);
+        for (Action action : restrictedActions.getActions(player)) {
             others.remove(action);
         }
 
+        int playerIndex = findPlayerIndex(player, allPlayers);
+
         try {
             for (Action candidateAction : others) {
-                if (isRationalizable(candidateAction, allPlayers, playerActions, subGame, game)) {
+                if (isRationalizable(playerIndex, candidateAction, allPlayers, playerActions, subGame, game)) {
                     rationalizableActions.add(candidateAction);
                 }
             }
@@ -61,18 +65,33 @@ public class LpSolveSymmetricRationalizableFinder implements SymmetricRationaliz
         return rationalizableActions;
     }
 
-    public Action findMaxRationalizable(Set<Action> actions, SymmetricGame game) {
-        Set<Action> others = new HashSet<Action>(game.getActions());
+    private int findPlayerIndex(Player player, Player[] players) {
+        int playerIndex = -1;
+        for (int i = 0; i < players.length; i++) {
+            if (player.equals(players[i])) {
+                playerIndex = i;
+                break;
+            }
+        }
 
-        for (Action action : actions) {
+        return playerIndex;
+    }
+
+    private boolean isRationalizable(int player, Action candidateAction, Player[] allPlayers, Action[] playerActions, StrategicMultiAgentSystem subGame, StrategicGame game) throws LpSolveException {
+        return rationalizableSlack(player, candidateAction, allPlayers, playerActions, subGame, game) <= 0.0;
+    }
+
+    public Action findMaxRationalizable(Player player, StrategicMultiAgentSystem restrictedActions, StrategicGame game) {
+        Set<Action> others = new HashSet<Action>(game.getActions(player));
+
+        for (Action action : restrictedActions.getActions(player)) {
             others.remove(action);
         }
 
-        return findMaxRationalizable(actions, others, game);
+        return findMaxRationalizable(player, restrictedActions, others, game);
     }
 
-    public Action findMaxRationalizable(Set<Action> actions, Set<Action> remaining, SymmetricGame game) {
-        MutableSymmetricMultiAgentSystem subGame = new DefaultSymmetricMultiAgentSystem();
+    public Action findMaxRationalizable(Player player, StrategicMultiAgentSystem restrictedActions, Set<Action> otherActions, StrategicGame game) {
 
         Player[] allPlayers = game.players().toArray(new Player[0]);
         Action[] playerActions = new Action[allPlayers.length];
@@ -80,17 +99,18 @@ public class LpSolveSymmetricRationalizableFinder implements SymmetricRationaliz
         Action maxRationalizable = null;
         double maxSlack = Double.NEGATIVE_INFINITY;
 
-        for (int i = 1; i < allPlayers.length; i++) {
-            subGame.addPlayer(allPlayers[i]);
-        }
+        Set<Player> otherPlayers = new HashSet<Player>(game.players());
 
-        for (Action action : actions) {
-            subGame.addAction(action);
-        }
+        otherPlayers.remove(player);
+
+        StrategicMultiAgentSystem subGame = new PlayerReducedStrategicMultiAgentSystem(restrictedActions, otherPlayers);
+
+
+        int playerIndex = findPlayerIndex(player, allPlayers);
 
         try {
-            for (Action candidateAction : remaining) {
-                double slack = -rationalizableSlack(candidateAction, allPlayers, playerActions, subGame, game);
+            for (Action candidateAction : otherActions) {
+                double slack = -rationalizableSlack(playerIndex, candidateAction, allPlayers, playerActions, subGame, game);
                 if (maxRationalizable == null || maxSlack < slack) {
                     maxRationalizable = candidateAction;
                     maxSlack = slack;
@@ -103,29 +123,23 @@ public class LpSolveSymmetricRationalizableFinder implements SymmetricRationaliz
         return maxRationalizable;
     }
 
-    private boolean isRationalizable(Action candidateAction, Player[] allPlayers, Action[] playerActions, SymmetricMultiAgentSystem subGame, SymmetricGame game) throws LpSolveException {
-        return rationalizableSlack(candidateAction, allPlayers, playerActions, subGame, game) <= 0.0;
-    }
-
-
-    public double rationalizableSlack(Action candidateAction, Set<Action> actions, SymmetricGame game) {
-        MutableSymmetricMultiAgentSystem subGame = new DefaultSymmetricMultiAgentSystem();
+    public double rationalizableSlack(Player player, Action candidateAction, StrategicMultiAgentSystem restrictedActions, StrategicGame game) {
 
         Player[] allPlayers = game.players().toArray(new Player[0]);
         Action[] playerActions = new Action[allPlayers.length];
 
-        for (int i = 1; i < allPlayers.length; i++) {
-            subGame.addPlayer(allPlayers[i]);
-        }
+        Set<Player> otherPlayers = new HashSet<Player>(game.players());
 
-        for (Action action : actions) {
-            subGame.addAction(action);
-        }
+        otherPlayers.remove(player);
+
+        StrategicMultiAgentSystem subGame = new PlayerReducedStrategicMultiAgentSystem(restrictedActions, otherPlayers);
 
         double slack = Double.NaN;
 
+        int playerIndex = findPlayerIndex(player, allPlayers);
+
         try {
-            slack = -rationalizableSlack(candidateAction, allPlayers, playerActions, subGame, game);
+            slack = -rationalizableSlack(playerIndex, candidateAction, allPlayers, playerActions, subGame, game);
         } catch (LpSolveException e) {
             throw new RuntimeException(e);
         }
@@ -133,16 +147,16 @@ public class LpSolveSymmetricRationalizableFinder implements SymmetricRationaliz
         return slack;
     }
 
-    private double rationalizableSlack(Action candidateAction, Player[] allPlayers, Action[] playerActions, SymmetricMultiAgentSystem subGame, SymmetricGame game) throws LpSolveException {
+    private double rationalizableSlack(int player, Action candidateAction, Player[] allPlayers, Action[] playerActions, StrategicMultiAgentSystem subGame, StrategicGame game) throws LpSolveException {
         LpSolve lp;
 
         int ret = 0;
 
-        double slack = -1.0;
+        double slack = Double.NaN;
 
-        List<SymmetricOutcome> subOutcomes = new ArrayList<SymmetricOutcome>();
+        List<Outcome> subOutcomes = new ArrayList<Outcome>();
 
-        for (SymmetricOutcome o : Games.symmetricTraversal(subGame)) {
+        for (Outcome o : Games.traversal(subGame)) {
             subOutcomes.add(o);
         }
 
@@ -188,17 +202,19 @@ public class LpSolveSymmetricRationalizableFinder implements SymmetricRationaliz
 
         row[subGameSize] = 1.0;
 
-        for (Action a : game.getActions()) {
+        for (Action a : game.getActions(allPlayers[player])) {
             if (!a.equals(candidateAction)) {
                 for (int i = 0; i < subGameSize; i++) {
-                    for (int j = 1; j < playerActions.length; j++) {
-                        playerActions[j] = subOutcomes.get(i).getAction(allPlayers[j]);
+                    for (int j = 0; j < playerActions.length; j++) {
+                        if (j != player) {
+                            playerActions[j] = subOutcomes.get(i).getAction(allPlayers[j]);
+                        }
                     }
-                    playerActions[0] = candidateAction;
-                    double payoffCandidate = game.payoff(Games.createSymmetricOutcome(allPlayers, playerActions)).getPayoff(allPlayers[0]).getValue();
+                    playerActions[player] = candidateAction;
+                    double payoffCandidate = game.payoff(Games.createOutcome(allPlayers, playerActions)).getPayoff(allPlayers[player]).getValue();
 
-                    playerActions[0] = a;
-                    double payoffA = game.payoff(Games.createSymmetricOutcome(allPlayers, playerActions)).getPayoff(allPlayers[0]).getValue();
+                    playerActions[player] = a;
+                    double payoffA = game.payoff(Games.createOutcome(allPlayers, playerActions)).getPayoff(allPlayers[player]).getValue();
 
                     row[i] = payoffCandidate - payoffA;
                 }
@@ -245,18 +261,16 @@ public class LpSolveSymmetricRationalizableFinder implements SymmetricRationaliz
         return slack;
     }
 
-    public double rationalizableDelta(Player player, Set<Action> restrictedGame, SymmetricGame game) {
-        return rationalizableEpsilon(restrictedGame, game);
-    }
-
-    public double rationalizableEpsilon(Set<Action> restrictedGame, SymmetricGame game) {
+    public double rationalizableDelta(Player player, StrategicMultiAgentSystem restrictedGame, StrategicGame game) {
         double delta = 0.0;
 
-        for (Action a : game.getActions()) {
+        Set<Action> restricted = restrictedGame.getActions(player);
 
-            if (!restrictedGame.contains(a)) {
+        for (Action a : game.getActions(player)) {
 
-                delta = Math.max(delta, rationalizableSlack(a, restrictedGame, game));
+            if (!restricted.contains(a)) {
+
+                delta = Math.max(delta, rationalizableSlack(player, a, restrictedGame, game));
 
             }
 
@@ -265,11 +279,14 @@ public class LpSolveSymmetricRationalizableFinder implements SymmetricRationaliz
         return delta;
     }
 
-    public double rationalizableDelta(Player player, SymmetricMultiAgentSystem restrictedGame, SymmetricGame game) {
-        return rationalizableDelta(player, restrictedGame.getActions(), game);
-    }
+    public double rationalizableEpsilon(StrategicMultiAgentSystem restrictedGame, StrategicGame game) {
+        double epsilon = 0.0;
 
-    public double rationalizableEpsilon(SymmetricMultiAgentSystem restrictedGame, SymmetricGame game) {
-        return rationalizableEpsilon(restrictedGame.getActions(), game);
+        for (Player p : game.players()) {
+            epsilon = Math.max(epsilon, rationalizableDelta(p, restrictedGame, game));
+
+        }
+
+        return epsilon;
     }
 }

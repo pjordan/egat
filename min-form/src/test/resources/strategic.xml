@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<nfg name="TEST" description="TEST">
+    <players>
+        <player id="alice">
+            <actions>
+                <action id="c"/>
+                <action id="d"/>
+            </actions>
+        </player>
+        <player id="bob">
+            <actions>
+                <action id="c"/>
+                <action id="d"/>
+            </actions>
+        </player>
+    </players>
+    <payoffs>
+        <payoff>
+            <outcome player="alice" action="c" value="3.0"/>
+            <outcome player="bob" action="c" value="3.0"/>
+        </payoff>
+        <payoff>
+            <outcome player="alice" action="d" value="1.0"/>
+            <outcome player="bob" action="d" value="1.0"/>
+        </payoff>
+        <payoff>
+            <outcome player="alice" action="c" value="0.0"/>
+            <outcome player="bob" action="d" value="5.0"/>
+        </payoff>
+        <payoff>
+            <outcome player="alice" action="d" value="5.0"/>
+            <outcome player="bob" action="c" value="0.0"/>                        
+        </payoff>
+    </payoffs>
+</nfg>

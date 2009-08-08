@@ -20,6 +20,8 @@ package edu.umich.eecs.ai.egat.minform;
 
 import edu.umich.eecs.ai.egat.game.Action;
 import edu.umich.eecs.ai.egat.game.SymmetricGame;
+import edu.umich.eecs.ai.egat.game.Player;
+import edu.umich.eecs.ai.egat.game.SymmetricMultiAgentSystem;
 
 import java.util.Set;
 
@@ -27,13 +29,71 @@ import java.util.Set;
  * @author Patrick Jordan
  */
 public interface SymmetricRationalizableFinder {
+    /**
+     * Returns all strategies that are rationalizable from a restricted set of actions.
+     * @param actions the restricted set of strategies
+     * @param game the base game
+     * @return the set of strategies that are rationalizable strategies.
+     */
     Set<Action> findRationalizable(Set<Action> actions, SymmetricGame game);
 
+    /**
+     * Returns the strategy that maximizes the gain from deviation
+     * @param actions the restricted set of strategies
+     * @param game the base game
+     * @return the strategy that maximizes the gain from deviation
+     */
     Action findMaxRationalizable(Set<Action> actions, SymmetricGame game);
 
+    /**
+     * Returns the strategy that maximizes the gain from deviation
+     * @param actions the restricted set of strategies
+     * @param others the set of actions outside the restricted set
+     * @param game the base game
+     * @return the strategy that maximizes the gain from deviation
+     */
     Action findMaxRationalizable(Set<Action> actions, Set<Action> others, SymmetricGame game);
 
+    /**
+     * Returns the slack from the rationalizable LP.
+     * @param candidateAction the candidate action
+     * @param actions the restricted set of actions
+     * @param game the base game
+     * @return the slack from the rationalizable LP
+     */
     double rationalizableSlack(Action candidateAction, Set<Action> actions, SymmetricGame game);
 
-    double rationalizableRestrictedSlack(Action candidateAction, Set<Action> actions, SymmetricGame game);
+    /**
+     * Returns the delta from the restricted game.
+     * @param player the player
+     * @param restrictedGame the restricted game
+     * @param game the base game
+     * @return the slack from the rationalizable LP
+     */
+    double rationalizableDelta(Player player, Set<Action> restrictedGame, SymmetricGame game);
+
+    /**
+     * Returns the delta from the restricted game.
+     * @param player the player
+     * @param restrictedGame the restricted game
+     * @param game the base game
+     * @return the slack from the rationalizable LP
+     */
+    double rationalizableDelta(Player player, SymmetricMultiAgentSystem restrictedGame, SymmetricGame game);
+
+    /**
+     * Returns the epsilon from the restricted game.
+     * @param restrictedGame the restricted game
+     * @param game the base game
+     * @return the slack from the rationalizable LP
+     */
+    double rationalizableEpsilon(Set<Action> restrictedGame, SymmetricGame game);
+
+    /**
+     * Returns the epsilon from the restricted game.
+     * @param restrictedGame the restricted game
+     * @param game the base game
+     * @return the slack from the rationalizable LP
+     */
+    double rationalizableEpsilon(SymmetricMultiAgentSystem restrictedGame, SymmetricGame game);
 }

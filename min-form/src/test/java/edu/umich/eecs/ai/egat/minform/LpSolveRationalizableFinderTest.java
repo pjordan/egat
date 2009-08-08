@@ -72,11 +72,13 @@ public class LpSolveRationalizableFinderTest {
         assertEquals(rationalized.size(), 1, 0);
 
         assertEquals(2.0, finder.rationalizableSlack(actions[0], otherActions, game), 0.01);
+        assertEquals(2.0, finder.rationalizableEpsilon(otherActions, game), 0.01);
 
         rationalized = finder.findRationalizable(initalActions, game);
 
         assertNotNull(rationalized);
         assertEquals(rationalized.size(), 0, 0);
+        assertEquals(0.0, finder.rationalizableEpsilon(initalActions, game), 0.01);
 
 
     }
