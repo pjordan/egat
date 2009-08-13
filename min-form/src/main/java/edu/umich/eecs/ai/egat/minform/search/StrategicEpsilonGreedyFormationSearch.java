@@ -29,16 +29,18 @@ import java.util.*;
 /**
  * @author Patrick R. Jordan
  */
-public class StrategicBestFirstFormationSearch extends BestFirstFormationSearch<StrategicGame, Map<Player, Set<Action>>> {
+public class StrategicEpsilonGreedyFormationSearch extends EpsilonGreedyFormationSearch<StrategicGame, Map<Player, Set<Action>>> {
     private Player[] players;
     private Action[][] actions;
     private StrategicRationalizableFinder rationalizableFinder;
     private double tolerance;
 
-    public StrategicBestFirstFormationSearch(StrategicGame base, StrategicRationalizableFinder rationalizableFinder, int maxQueueSize, double tolerance) {
-        super(base, maxQueueSize);
-        this.rationalizableFinder = rationalizableFinder;
-        this.tolerance = tolerance;
+    public StrategicEpsilonGreedyFormationSearch(StrategicGame base, StrategicRationalizableFinder rationalizableFinder) {
+        this(base, rationalizableFinder, 1e-8);
+    }
+
+    public StrategicEpsilonGreedyFormationSearch(StrategicGame base, StrategicRationalizableFinder rationalizableFinder, double tolerance) {
+        super(base);
 
         this.rationalizableFinder = rationalizableFinder;
         this.tolerance = tolerance;
@@ -52,18 +54,6 @@ public class StrategicBestFirstFormationSearch extends BestFirstFormationSearch<
             actions[i] = base.getActions(players[i]).toArray(new Action[0]);
 
         }
-    }
-
-    public StrategicBestFirstFormationSearch(StrategicGame base, StrategicRationalizableFinder rationalizableFinder, int maxQueueSize) {
-        this(base, rationalizableFinder, maxQueueSize, 1e-8);
-    }
-
-    public StrategicBestFirstFormationSearch(StrategicGame base, StrategicRationalizableFinder rationalizableFinder) {
-        this(base, rationalizableFinder, Integer.MAX_VALUE);
-    }
-
-    public StrategicBestFirstFormationSearch(StrategicGame base, StrategicRationalizableFinder rationalizableFinder, double tolerance) {
-        this(base, rationalizableFinder, Integer.MAX_VALUE, tolerance);
     }
 
     protected void initialNodes(StrategicGame base,
@@ -98,7 +88,7 @@ public class StrategicBestFirstFormationSearch extends BestFirstFormationSearch<
 
             if (1 <= bound) {
                 double epsilon = rationalizableFinder.rationalizableEpsilon(game, base);
-                epsilon = Math.round(epsilon / tolerance) * tolerance;
+                epsilon = Math.round(epsilon/tolerance)*tolerance;
 
                 FormationSearchNode<StrategicGame, Map<Player, Set<Action>>> node = new FormationSearchNode<StrategicGame, Map<Player, Set<Action>>>(game, strategySpace, epsilon, 1);
 
@@ -117,11 +107,11 @@ public class StrategicBestFirstFormationSearch extends BestFirstFormationSearch<
 
             Set<Action> currentPlayerActions = node.getGame().getActions(players[i]);
 
-            if (currentPlayerActions.size() != actions[i].length) {
+            if(currentPlayerActions.size()!=actions[i].length) {
 
                 for (int j = 0; j < actions[i].length; j++) {
 
-                    if (!currentPlayerActions.contains(actions[i][j])) {
+                    if(!currentPlayerActions.contains(actions[i][j])) {
 
                         Set<Action> newActions = new HashSet<Action>(currentPlayerActions);
 
@@ -129,21 +119,16 @@ public class StrategicBestFirstFormationSearch extends BestFirstFormationSearch<
 
                         Map<Player, Set<Action>> key = new HashMap<Player, Set<Action>>();
 
-                        for (int k = 0; k < players.length; k++) {
-                            key.put(players[k], k == i ? newActions : node.getGame().getActions(players[k]));
+                        for(int k = 0; k < players.length; k++) {
+                            key.put(players[k], k==i ? newActions : node.getGame().getActions(players[k]));
                         }
 
-                        if (!nodes.containsKey(key)) {
+                        if(!nodes.containsKey(key)) {
+                            FormationSearchNode<StrategicGame, Map<Player, Set<Action>>> child = createNode(key, bound);
 
-                            double tau = rationalizableFinder.rationalizableTau(players[i], actions[i][j], node.getGame(), getBase());
-
-                            if (tau > 0) {
-                                FormationSearchNode<StrategicGame, Map<Player, Set<Action>>> child = createNode(key, bound);
-
-                                if (child != null) {
-                                    queue.offer(child);
-                                    nodes.put(key, child);
-                                }
+                            if(child!=null) {
+                                queue.offer(child);
+                                nodes.put(key, child);
                             }
                         }
                     }
@@ -166,7 +151,7 @@ public class StrategicBestFirstFormationSearch extends BestFirstFormationSearch<
 
         if (total <= bound) {
             double epsilon = rationalizableFinder.rationalizableEpsilon(game, getBase());
-            epsilon = Math.round(epsilon / tolerance) * tolerance;
+            epsilon = Math.round(epsilon/tolerance)*tolerance;
 
             node = new FormationSearchNode<StrategicGame, Map<Player, Set<Action>>>(game, strategySpace, epsilon, total);
 

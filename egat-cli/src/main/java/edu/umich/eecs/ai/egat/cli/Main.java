@@ -31,6 +31,7 @@ import edu.umich.eecs.ai.egat.cli.neresponse.NEResponseCommandHandler;
 import edu.umich.eecs.ai.egat.cli.robustregret.RobustRegretCommandHandler;
 import edu.umich.eecs.ai.egat.cli.strategyregret.StrategyRegretCommandHandler;
 import edu.umich.eecs.ai.egat.cli.minform.MinFormCommandHandler;
+import edu.umich.eecs.ai.egat.cli.eminform.EpsilonMinFormCommandHandler;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -124,7 +125,7 @@ public class Main {
         commandHandlers.add(new NEResponseCommandHandler());
         commandHandlers.add(new StrategyRegretCommandHandler());
         commandHandlers.add(new MinFormCommandHandler());
-        
+        commandHandlers.add(new EpsilonMinFormCommandHandler());
         return commandHandlers;
     }
 

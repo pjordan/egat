@@ -31,29 +31,22 @@ import java.util.HashSet;
 /**
  * @author Patrick R. Jordan
  */
-public class SymmetricBestFirstFormationSearch extends BestFirstFormationSearch<SymmetricGame, Set<Action>> {
+public class SymmetricEpsilonGreedyFormationSearch extends EpsilonGreedyFormationSearch<SymmetricGame, Set<Action>> {
     private Action[] actions;
     private SymmetricRationalizableFinder rationalizableFinder;
     private double tolerance;
 
-    public SymmetricBestFirstFormationSearch(SymmetricGame base, SymmetricRationalizableFinder rationalizableFinder, int maxQueueSize, double tolerance) {
-        super(base, maxQueueSize);
+    public SymmetricEpsilonGreedyFormationSearch(SymmetricGame base, SymmetricRationalizableFinder rationalizableFinder) {
+        this(base, rationalizableFinder, 1e-8);
+    }
+
+    public SymmetricEpsilonGreedyFormationSearch(SymmetricGame base, SymmetricRationalizableFinder rationalizableFinder, double tolerance) {
+        super(base);
+
         this.rationalizableFinder = rationalizableFinder;
         this.tolerance = tolerance;
 
         actions = base.getActions().toArray(new Action[0]);
-    }
-
-    public SymmetricBestFirstFormationSearch(SymmetricGame base, SymmetricRationalizableFinder rationalizableFinder) {
-        this(base, rationalizableFinder, 1e-8);
-    }
-
-    public SymmetricBestFirstFormationSearch(SymmetricGame base, SymmetricRationalizableFinder rationalizableFinder, int maxQueueSize) {
-        this(base, rationalizableFinder, maxQueueSize, 1e-8);
-    }
-
-    public SymmetricBestFirstFormationSearch(SymmetricGame base, SymmetricRationalizableFinder rationalizableFinder, double tolerance) {
-        this(base, rationalizableFinder, Integer.MAX_VALUE, tolerance);
     }
 
     protected void initialNodes(SymmetricGame base,
@@ -100,21 +93,18 @@ public class SymmetricBestFirstFormationSearch extends BestFirstFormationSearch<
 
 
                     if (!nodes.containsKey(key)) {
-                        double tau = rationalizableFinder.rationalizableTau(action, node.getGame(), getBase());
+                        FormationSearchNode<SymmetricGame, Set<Action>> child = createNode(key, bound);
 
-                        if (tau > 0) {
-                            FormationSearchNode<SymmetricGame, Set<Action>> child = createNode(key, bound);
-
-                            if (child != null) {
-                                queue.offer(child);
-                                nodes.put(key, child);
-                            }
+                        if (child != null) {
+                            queue.offer(child);
+                            nodes.put(key, child);
                         }
                     }
                 }
             }
         }
     }
+
 
 
     protected FormationSearchNode<SymmetricGame, Set<Action>> createNode(Set<Action> strategySpace, int bound) {
@@ -142,9 +132,10 @@ public class SymmetricBestFirstFormationSearch extends BestFirstFormationSearch<
         int max = Math.max(players, strategies - 1);
         int min = n - max;
 
-        for (int i = max + 1; i <= n; i++) {
+        for (int i = max+1; i <= n; i++) {
             total *= i;
         }
+        
         for (int i = 2; i <= min; i++) {
             total /= i;
         }

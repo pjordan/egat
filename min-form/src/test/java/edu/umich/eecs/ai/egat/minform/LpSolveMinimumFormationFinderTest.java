@@ -26,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
 import java.io.IOException;
+import java.io.FileInputStream;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 

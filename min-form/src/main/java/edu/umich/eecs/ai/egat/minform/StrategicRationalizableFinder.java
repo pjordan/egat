@@ -65,6 +65,16 @@ public interface StrategicRationalizableFinder {
     double rationalizableSlack(Player player, Action candidateAction, StrategicMultiAgentSystem restrictedActions, StrategicGame game);
 
     /**
+     * Returns the tau from the rationalizable LP.
+     * @param player the player
+     * @param candidateAction the candidate action
+     * @param restrictedActions the restricted actions
+     * @param game the base game
+     * @return the slack from the rationalizable LP
+     */
+    double rationalizableTau(Player player, Action candidateAction, StrategicMultiAgentSystem restrictedActions, StrategicGame game);
+
+    /**
      * Returns the delta for the restricted game.
      * @param restrictedGame the restricted game
      * @param game the base game

@@ -148,6 +148,39 @@ public class LpSolveStrategicRationalizableFinder implements StrategicRationaliz
     }
 
     private double rationalizableSlack(int player, Action candidateAction, Player[] allPlayers, Action[] playerActions, StrategicMultiAgentSystem subGame, StrategicGame game) throws LpSolveException {
+        return rationalizableLP(player, candidateAction, allPlayers, playerActions, subGame, game, game.getActions(allPlayers[player]));
+    }
+
+    private double rationalizableTau(int player, Action candidateAction, Player[] allPlayers, Action[] playerActions, StrategicMultiAgentSystem subGame, StrategicMultiAgentSystem restrictedGame, StrategicGame game) throws LpSolveException {
+        return rationalizableLP(player, candidateAction, allPlayers, playerActions, subGame, game, restrictedGame.getActions(allPlayers[player]));
+    }
+
+    public double rationalizableTau(Player player, Action candidateAction, StrategicMultiAgentSystem restrictedActions, StrategicGame game) {
+        Player[] allPlayers = game.players().toArray(new Player[0]);
+        Action[] playerActions = new Action[allPlayers.length];
+
+        Set<Player> otherPlayers = new HashSet<Player>(game.players());
+
+        otherPlayers.remove(player);
+
+        StrategicMultiAgentSystem subGame = new PlayerReducedStrategicMultiAgentSystem(restrictedActions, otherPlayers);
+
+        double slack = Double.NaN;
+
+        int playerIndex = findPlayerIndex(player, allPlayers);
+
+        try {
+            slack = -rationalizableTau(playerIndex, candidateAction, allPlayers, playerActions, subGame, restrictedActions, game);
+        } catch (LpSolveException e) {
+            throw new RuntimeException(e);
+        }
+
+        return slack;
+    }
+
+
+
+    private double rationalizableLP(int player, Action candidateAction, Player[] allPlayers, Action[] playerActions, StrategicMultiAgentSystem subGame, StrategicGame game, Set<Action> others) throws LpSolveException {
         LpSolve lp;
 
         int ret = 0;
@@ -202,7 +235,7 @@ public class LpSolveStrategicRationalizableFinder implements StrategicRationaliz
 
         row[subGameSize] = 1.0;
 
-        for (Action a : game.getActions(allPlayers[player])) {
+        for (Action a : others) {
             if (!a.equals(candidateAction)) {
                 for (int i = 0; i < subGameSize; i++) {
                     for (int j = 0; j < playerActions.length; j++) {
@@ -265,12 +298,17 @@ public class LpSolveStrategicRationalizableFinder implements StrategicRationaliz
         double delta = 0.0;
 
         Set<Action> restricted = restrictedGame.getActions(player);
+        Set<Action> others = new HashSet<Action>(game.getActions(player));
 
-        for (Action a : game.getActions(player)) {
+        for(Action a : restricted) {
+            others.remove(a);
+        }
+
+        for (Action a : others) {
 
             if (!restricted.contains(a)) {
 
-                delta = Math.max(delta, rationalizableSlack(player, a, restrictedGame, game));
+                delta = Math.max(delta, rationalizableTau(player, a, restrictedGame, game));
 
             }
 

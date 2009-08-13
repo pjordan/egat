@@ -73,22 +73,46 @@ public class LpSolveMinimumFormationFinder implements MinimumFormationFinder {
             SymmetricGame formationGame = formations.get(action);
 
             if (formationGame == null) {
-                formationGame = game;
-            }
 
-            if (formationGame.getActions().contains(action)) {
-                SymmetricGame reducedGame = mccFinder.findMinContainingFormation(action, formationGame);
+                SymmetricGame reducedGame = mccFinder.findMinContainingFormation(action, game);
 
-                if (reducedGame.getActions().size() < formationGame.getActions().size()) {
+                boolean flag = true;
 
-                    for (Action a : formationGame.getActions()) {
+                for (Action a : reducedGame.getActions()) {
+                    SymmetricGame aGame = formations.get(a);
+
+                    if (aGame == null || reducedGame.getActions().size() < aGame.getActions().size()) {
+
                         formations.put(a, reducedGame);
-                    }
 
-                    minFormations.remove(formationGame);
+                        minFormations.remove(aGame);
+
+                    } else if (reducedGame.getActions().size() > aGame.getActions().size()) {
+
+                        flag = false;
+
+                    }
+                }
+
+                if (flag) {
                     minFormations.add(reducedGame);
                 }
 
+            } else if (formationGame.getActions().contains(action)) {
+                SymmetricGame reducedGame = mccFinder.findMinContainingFormation(action, formationGame);
+
+                if (reducedGame.getActions().size() < formationGame.getActions().size()) {
+                    minFormations.remove(formationGame);
+                    minFormations.add(reducedGame);
+
+
+                    for (Action a : formationGame.getActions()) {
+                        SymmetricGame aGame = formations.get(a);
+                        if (aGame == null || aGame==formationGame) {
+                            formations.put(a, reducedGame);
+                        }
+                    }
+                }
             }
         }
 

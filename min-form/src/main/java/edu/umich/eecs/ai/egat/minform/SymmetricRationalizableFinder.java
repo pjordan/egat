@@ -64,13 +64,13 @@ public interface SymmetricRationalizableFinder {
     double rationalizableSlack(Action candidateAction, Set<Action> actions, SymmetricGame game);
 
     /**
-     * Returns the delta from the restricted game.
-     * @param player the player
+     * Returns the tau from the rationalizable LP.
+     * @param candidateAction the candidate action
      * @param restrictedGame the restricted game
      * @param game the base game
      * @return the slack from the rationalizable LP
      */
-    double rationalizableDelta(Player player, Set<Action> restrictedGame, SymmetricGame game);
+    double rationalizableTau(Action candidateAction, SymmetricMultiAgentSystem restrictedGame, SymmetricGame game);
 
     /**
      * Returns the delta from the restricted game.
@@ -80,14 +80,6 @@ public interface SymmetricRationalizableFinder {
      * @return the slack from the rationalizable LP
      */
     double rationalizableDelta(Player player, SymmetricMultiAgentSystem restrictedGame, SymmetricGame game);
-
-    /**
-     * Returns the epsilon from the restricted game.
-     * @param restrictedGame the restricted game
-     * @param game the base game
-     * @return the slack from the rationalizable LP
-     */
-    double rationalizableEpsilon(Set<Action> restrictedGame, SymmetricGame game);
 
     /**
      * Returns the epsilon from the restricted game.

@@ -27,9 +27,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
 import java.io.IOException;
+import java.io.FileInputStream;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import edu.umich.eecs.ai.egat.gamexml.StrategicGameHandler;
 import edu.umich.eecs.ai.egat.minform.LpSolveStrategicRationalizableFinder;
@@ -39,6 +41,7 @@ import edu.umich.eecs.ai.egat.game.*;
  * @author Patrick R. Jordan
  */
 public class StrategicBestFirstFormationSearchTest {
+    
     @Test
     public void test() throws SAXException, ParserConfigurationException, IOException {
         SAXParserFactory factory = SAXParserFactory.newInstance();

@@ -27,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
 import java.io.IOException;
+import java.io.FileInputStream;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
@@ -69,4 +70,6 @@ public class SymmetricBestFirstFormationSearchTest {
         assertEquals(node1.getGame().getActions().size(),1);
         assertEquals(node2.getGame().getActions().size(),1);
     }
+
+    
 }

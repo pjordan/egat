@@ -21,12 +21,9 @@ package edu.umich.eecs.ai.egat.cli.eminform;
 import edu.umich.eecs.ai.egat.cli.AbstractGameCommandHandler;
 import edu.umich.eecs.ai.egat.cli.CommandProcessingException;
 import edu.umich.eecs.ai.egat.game.*;
-import edu.umich.eecs.ai.egat.minform.LpSolveMinimumFormationFinder;
 import edu.umich.eecs.ai.egat.minform.LpSolveSymmetricRationalizableFinder;
 import edu.umich.eecs.ai.egat.minform.LpSolveStrategicRationalizableFinder;
-import edu.umich.eecs.ai.egat.minform.search.SymmetricBestFirstFormationSearch;
-import edu.umich.eecs.ai.egat.minform.search.FormationSearchNode;
-import edu.umich.eecs.ai.egat.minform.search.StrategicBestFirstFormationSearch;
+import edu.umich.eecs.ai.egat.minform.search.*;
 import edu.umich.eecs.ai.egat.gamexml.SymmetricGameWriter;
 import edu.umich.eecs.ai.egat.gamexml.StrategicGameWriter;
 import org.apache.commons.cli2.builder.CommandBuilder;
@@ -44,9 +41,21 @@ import java.util.Map;
  * @author Patrick Jordan
  */
 public class EpsilonMinFormCommandHandler extends AbstractGameCommandHandler {
+    private Option epsilonGreedyOption;
+
+    private boolean epsilonGreedy;
+
+    private Option tauGreedyOption;
+
+    private boolean tauGreedy;
+
     private Option maxSizeOption;
 
     private int maxSize;
+
+    private Option maxQueueOption;
+
+    private int maxQueue;
 
     private Option toleranceOption;
 
@@ -58,6 +67,13 @@ public class EpsilonMinFormCommandHandler extends AbstractGameCommandHandler {
 
         final ArgumentBuilder argumentBuilder = new ArgumentBuilder();
 
+        epsilonGreedyOption = defaultOptionBuilder.withLongName("epsilon-greedy").withDescription("run the epsilon greedy algorithm").create();
+
+        groupBuilder.withOption(epsilonGreedyOption);
+
+        tauGreedyOption = defaultOptionBuilder.withLongName("tau-greedy").withDescription("run the tau greedy algorithm").create();
+
+        groupBuilder.withOption(tauGreedyOption);
 
         maxSizeOption = defaultOptionBuilder.withLongName("max-size")
                 .withArgument(argumentBuilder.withMinimum(1)
@@ -66,6 +82,14 @@ public class EpsilonMinFormCommandHandler extends AbstractGameCommandHandler {
                 .withDescription("minimum game size").create();
 
         groupBuilder.withOption(maxSizeOption);
+
+        maxQueueOption = defaultOptionBuilder.withLongName("max-queue")
+                .withArgument(argumentBuilder.withMinimum(1)
+                        .withMaximum(1)
+                        .withName("max").create())
+                .withDescription("max queue size").create();
+
+        groupBuilder.withOption(maxQueueOption);
 
         toleranceOption = defaultOptionBuilder.withLongName("tolerance")
                 .withArgument(argumentBuilder.withMinimum(1)
@@ -86,6 +110,15 @@ public class EpsilonMinFormCommandHandler extends AbstractGameCommandHandler {
         } else {
             tolerance = 1e-8;
         }
+
+        if (commandLine.hasOption(maxQueueOption)) {
+            maxQueue = Integer.parseInt(commandLine.getValue(maxQueueOption).toString());
+        } else {
+            maxQueue = Integer.MAX_VALUE;
+        }
+
+        epsilonGreedy = commandLine.hasOption(epsilonGreedyOption);
+        tauGreedy = commandLine.hasOption(tauGreedyOption);
     }
 
     protected String getCommandName() {
@@ -98,7 +131,15 @@ public class EpsilonMinFormCommandHandler extends AbstractGameCommandHandler {
 
             LpSolveSymmetricRationalizableFinder finder = new LpSolveSymmetricRationalizableFinder();
 
-            SymmetricBestFirstFormationSearch search = new SymmetricBestFirstFormationSearch(game, finder, tolerance);
+            FormationSearch<SymmetricGame, Set<Action>> search;
+
+            if(epsilonGreedy) {
+                search = new SymmetricEpsilonGreedyFormationSearch(game, finder, tolerance);
+            } else if(tauGreedy) {
+                search = new SymmetricTauGreedyFormationSearch(game, finder, tolerance);
+            } else {
+                search = new SymmetricBestFirstFormationSearch(game, finder, maxQueue, tolerance);
+            }
 
             FormationSearchNode<SymmetricGame, Set<Action>> node = search.run(maxSize);
 
@@ -122,7 +163,16 @@ public class EpsilonMinFormCommandHandler extends AbstractGameCommandHandler {
 
             LpSolveStrategicRationalizableFinder finder = new LpSolveStrategicRationalizableFinder();
 
-            StrategicBestFirstFormationSearch search = new StrategicBestFirstFormationSearch(game, finder, tolerance);
+            FormationSearch<StrategicGame, Map<Player,Set<Action>>> search;
+
+            if(epsilonGreedy) {
+                search = new StrategicEpsilonGreedyFormationSearch(game, finder, tolerance);
+            } else if(tauGreedy) {
+                search = new StrategicTauGreedyFormationSearch(game, finder, tolerance);
+            } else {
+                search = new StrategicBestFirstFormationSearch(game, finder, maxQueue, tolerance);
+            }
+
 
             FormationSearchNode<StrategicGame, Map<Player,Set<Action>>> node = search.run(maxSize);
 

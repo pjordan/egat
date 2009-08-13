@@ -30,8 +30,7 @@ import java.util.Set;
 import java.util.HashSet;
 
 import edu.umich.eecs.ai.egat.gamexml.SymmetricGameHandler;
-import edu.umich.eecs.ai.egat.game.SymmetricGame;
-import edu.umich.eecs.ai.egat.game.Action;
+import edu.umich.eecs.ai.egat.game.*;
 
 /**
  * @author Patrick Jordan
@@ -65,6 +64,9 @@ public class LpSolveRationalizableFinderTest {
         Set<Action> otherActions = new HashSet<Action>();
         otherActions.add(actions[1]);
 
+        SymmetricMultiAgentSystem otherReducedGame = new ActionReducedSymmetricGame(game, otherActions);
+        SymmetricMultiAgentSystem initialReducedGame = new ActionReducedSymmetricGame(game, initalActions);
+
         Set<Action> rationalized = finder.findRationalizable(otherActions, game);
 
 
@@ -72,13 +74,13 @@ public class LpSolveRationalizableFinderTest {
         assertEquals(rationalized.size(), 1, 0);
 
         assertEquals(2.0, finder.rationalizableSlack(actions[0], otherActions, game), 0.01);
-        assertEquals(2.0, finder.rationalizableEpsilon(otherActions, game), 0.01);
+        assertEquals(2.0, finder.rationalizableEpsilon(otherReducedGame, game), 0.01);
 
         rationalized = finder.findRationalizable(initalActions, game);
 
         assertNotNull(rationalized);
         assertEquals(rationalized.size(), 0, 0);
-        assertEquals(0.0, finder.rationalizableEpsilon(initalActions, game), 0.01);
+        assertEquals(0.0, finder.rationalizableEpsilon(initialReducedGame, game), 0.01);
 
 
     }

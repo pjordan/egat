@@ -20,34 +20,28 @@ package edu.umich.eecs.ai.egat.minform.search;
 
 import edu.umich.eecs.ai.egat.game.StrategicGame;
 
-import java.util.*;
+import java.util.Queue;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.PriorityQueue;
 
 /**
  * @author Patrick R. Jordan
  */
-public abstract class BestFirstFormationSearch<T extends StrategicGame,S> implements FormationSearch<T,S> {
+public abstract class EpsilonGreedyFormationSearch<T extends StrategicGame,S> implements FormationSearch<T,S> {
     private T base;
-    private int maxQueueSize;
 
-    protected BestFirstFormationSearch(T base, int maxQueueSize) {
+    public EpsilonGreedyFormationSearch(T base) {
         this.base = base;
-        this.maxQueueSize = maxQueueSize;
-    }
-
-    public BestFirstFormationSearch(T base) {
-        this(base, Integer.MAX_VALUE);
     }
 
     public FormationSearchNode<T,S> run(int bound) {
         FormationSearchNode<T,S> best = null;
 
-        PriorityQueue<FormationSearchNode<T,S>> queue = new PriorityQueue<FormationSearchNode<T,S>>();
+        Queue<FormationSearchNode<T,S>> queue = new PriorityQueue<FormationSearchNode<T,S>>();
         Map<S,FormationSearchNode<T,S>> nodes = new HashMap<S,FormationSearchNode<T,S>>();
 
         initialNodes(base, queue, nodes, bound);
-
-
-        maintainQueue(queue);
 
         while(!queue.isEmpty()) {
             FormationSearchNode<T,S> node = queue.poll();
@@ -59,10 +53,10 @@ public abstract class BestFirstFormationSearch<T extends StrategicGame,S> implem
             if(best.getValue() < Double.MIN_VALUE) {
                 return best;
             }
-
+            
+            queue.clear();
+            
             expandNode(node, queue, nodes, bound);
-
-            maintainQueue(queue);
         }
 
         return best;
@@ -74,15 +68,5 @@ public abstract class BestFirstFormationSearch<T extends StrategicGame,S> implem
 
     public T getBase() {
         return base;
-    }
-
-    private void maintainQueue(Queue<FormationSearchNode<T,S>> queue) {
-        if(queue.size()>maxQueueSize) {
-            
-            List<FormationSearchNode<T,S>> list = new ArrayList<FormationSearchNode<T,S>>(queue);
-            Collections.sort(list);
-
-            queue.removeAll(list.subList(maxQueueSize, queue.size()));
-        }
     }
 }
