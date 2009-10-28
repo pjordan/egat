@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import edu.umich.eecs.ai.egat.gamexml.SymmetricGameHandler;
 import edu.umich.eecs.ai.egat.game.DefaultSymmetricGame;
+import edu.umich.eecs.ai.egat.game.SymmetricGame;
 
 /**
  * @author Patrick Jordan
@@ -50,9 +51,9 @@ public class SymmetricIteratedDominatedStrategiesEliminatorImplTest {
 
         SymmetricIteratedDominatedStrategiesEliminatorImpl eliminator = new SymmetricIteratedDominatedStrategiesEliminatorImpl();
 
-        eliminator.eliminateDominatedStrategies(game);
+        SymmetricGame reduced = eliminator.eliminateDominatedStrategies(game);
 
-        assertEquals(game.getActions().size(),1,0);
+        assertEquals(reduced.getActions().size(),1,0);
 
         parser.parse( DominanceUtilsTest.class.getResourceAsStream("/symmetric.xml") , handler);
 
@@ -60,8 +61,8 @@ public class SymmetricIteratedDominatedStrategiesEliminatorImplTest {
 
         eliminator = new SymmetricIteratedDominatedStrategiesEliminatorImpl(new PureSymmetricDominanceTesterImpl());
 
-        eliminator.eliminateDominatedStrategies(game);
+        reduced = eliminator.eliminateDominatedStrategies(game);
 
-        assertEquals(game.getActions().size(),1,0);
+        assertEquals(reduced.getActions().size(),1,0);
     }
 }

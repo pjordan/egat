@@ -25,5 +25,5 @@ import edu.umich.eecs.ai.egat.game.MutableStrategicGame;
  * @author Patrick Jordan
  */
 public interface StrategicIteratedDominatedStrategiesEliminator {
-    MutableStrategicGame eliminateDominatedStrategies(MutableStrategicGame game);
+    StrategicGame eliminateDominatedStrategies(StrategicGame game);
 }

@@ -33,11 +33,17 @@ public abstract class AbstractIdentifiable<T extends Identifiable> implements Id
     private String id;
 
     /**
+     * The hash code.
+     */
+    private int hashCode;
+
+    /**
      * Creates a new identifiable.
      * @param id the identifier.
      */
     protected AbstractIdentifiable(final String id) {
         setID(id);
+        hashCode = id.hashCode();
     }
 
     /**
@@ -95,8 +101,8 @@ public abstract class AbstractIdentifiable<T extends Identifiable> implements Id
         }
 
         T that = (T) o;
-
-        return id.equals(that.getID());
+        
+        return that.hashCode()==hashCode && id.equals(that.getID());
     }
 
     /**
@@ -105,7 +111,7 @@ public abstract class AbstractIdentifiable<T extends Identifiable> implements Id
      */
     @Override
     public final int hashCode() {
-        return id.hashCode();
+        return hashCode;
     }
 
     /**

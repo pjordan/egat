@@ -19,6 +19,7 @@
 package edu.umich.eecs.ai.egat.minform.search;
 
 import edu.umich.eecs.ai.egat.game.StrategicGame;
+import edu.umich.eecs.ai.egat.game.MultiAgentSystem;
 
 import java.util.Queue;
 import java.util.Map;
@@ -28,26 +29,26 @@ import java.util.PriorityQueue;
 /**
  * @author Patrick R. Jordan
  */
-public abstract class TauGreedyFormationSearch<T extends StrategicGame,S> implements FormationSearch<T,S> {
+public abstract class TauGreedyFormationSearch<T extends StrategicGame, M extends MultiAgentSystem, S> implements FormationSearch<T, M, S> {
     private T base;
 
     public TauGreedyFormationSearch(T base) {
         this.base = base;
     }
 
-    public FormationSearchNode<T,S> run(int bound) {
-        FormationSearchNode<T,S> best = null;
+    public FormationSearchNode<T, S> run(int bound) {
+        FormationSearchNode<T, S> best = null;
 
 
-        FormationSearchNode<T,S> node = initialNode(base, bound);
+        FormationSearchNode<T, S> node = initialNode(base, bound);
 
-        while(node!=null) {
+        while (node != null) {
 
-            if(best == null || node.compareTo(best) < 0) {
+            if (best == null || node.compareTo(best) < 0) {
                 best = node;
             }
 
-            if(best.getValue() < Double.MIN_VALUE) {
+            if (best.getValue() < Double.MIN_VALUE) {
                 return best;
             }
 
@@ -58,9 +59,37 @@ public abstract class TauGreedyFormationSearch<T extends StrategicGame,S> implem
         return best;
     }
 
-    protected abstract FormationSearchNode<T,S> initialNode(T base, int bound);
+    public FormationSearchNode<T, S> run(M bound) {
+        FormationSearchNode<T, S> best = null;
 
-    protected abstract FormationSearchNode<T,S> expandNode(FormationSearchNode<T,S> node, int bound);
+
+        FormationSearchNode<T, S> node = initialNode(base, bound);
+
+        while (node != null) {
+
+            if (best == null || node.compareTo(best) < 0) {
+                best = node;
+            }
+
+            if (best.getValue() < Double.MIN_VALUE) {
+                return best;
+            }
+
+
+            node = expandNode(node, bound);
+        }
+
+        return best;
+    }
+
+
+    protected abstract FormationSearchNode<T, S> initialNode(T base, M bound);
+
+    protected abstract FormationSearchNode<T, S> expandNode(FormationSearchNode<T, S> node, M bound);
+
+    protected abstract FormationSearchNode<T, S> initialNode(T base, int bound);
+
+    protected abstract FormationSearchNode<T, S> expandNode(FormationSearchNode<T, S> node, int bound);
 
     public T getBase() {
         return base;

@@ -29,7 +29,7 @@ import java.util.HashSet;
 /**
  * @author Patrick R. Jordan
  */
-public class SymmetricTauGreedyFormationSearch extends TauGreedyFormationSearch<SymmetricGame, Set<Action>> {
+public class SymmetricTauGreedyFormationSearch extends TauGreedyFormationSearch<SymmetricGame, SymmetricMultiAgentSystem, Set<Action>> {
     private Action[] actions;
     private SymmetricRationalizableFinder rationalizableFinder;
     private double tolerance;
@@ -128,6 +128,21 @@ public class SymmetricTauGreedyFormationSearch extends TauGreedyFormationSearch<
         return node;
     }
 
+    protected FormationSearchNode<SymmetricGame, Set<Action>> createNode(Set<Action> strategySpace) {
+        SymmetricGame game = new ActionReducedSymmetricGame(getBase(), strategySpace);
+
+        int total = calculateGameSize(strategySpace.size(), game.players().size());
+
+
+        double epsilon = rationalizableFinder.rationalizableEpsilon(game, getBase());
+        epsilon = Math.round(epsilon / tolerance) * tolerance;
+
+        FormationSearchNode<SymmetricGame, Set<Action>> node = new FormationSearchNode<SymmetricGame, Set<Action>>(game, strategySpace, epsilon, total);
+
+
+        return node;
+    }
+
     protected int calculateGameSize(int strategies, int players) {
         int n = strategies + players - 1;
 
@@ -146,4 +161,69 @@ public class SymmetricTauGreedyFormationSearch extends TauGreedyFormationSearch<
 
         return total;
     }
+
+    protected FormationSearchNode<SymmetricGame, Set<Action>> initialNode(SymmetricGame base, SymmetricMultiAgentSystem bound) {
+        FormationSearchNode<SymmetricGame, Set<Action>> bestNode = null;
+
+        for (Action action : actions) {
+            if (bound.getActions().contains(action)) {
+                Set<Action> strategySpace = new HashSet<Action>();
+
+                strategySpace.add(action);
+
+                SymmetricGame game = new ActionReducedSymmetricGame(base, strategySpace);
+
+
+                double epsilon = rationalizableFinder.rationalizableEpsilon(game, base);
+                epsilon = Math.round(epsilon / tolerance) * tolerance;
+
+                FormationSearchNode<SymmetricGame, Set<Action>> node = new FormationSearchNode<SymmetricGame, Set<Action>>(game, strategySpace, epsilon, 1);
+
+                if (bestNode == null || node.getValue() < bestNode.getValue()) {
+                    bestNode = node;
+                }
+            }
+        }
+
+        return bestNode;
+    }
+
+    protected FormationSearchNode<SymmetricGame, Set<Action>> expandNode(FormationSearchNode<SymmetricGame, Set<Action>> node, SymmetricMultiAgentSystem bound) {
+
+
+        FormationSearchNode<SymmetricGame, Set<Action>> maxNode = null;
+        double maxTau = Double.NEGATIVE_INFINITY;
+
+        Set<Action> currentPlayerActions = node.getGame().getActions();
+
+        if (currentPlayerActions.size() != actions.length) {
+
+            for (Action action : actions) {
+
+                if (bound.getActions().contains(action) && !currentPlayerActions.contains(action)) {
+
+                    double tau = rationalizableFinder.rationalizableTau(action, node.getGame(), getBase());
+
+                    if (tau > maxTau) {
+                        Set<Action> key = new HashSet<Action>(currentPlayerActions);
+
+                        key.add(action);
+
+
+                        FormationSearchNode<SymmetricGame, Set<Action>> child = createNode(key);
+
+                        if (child != null) {
+                            maxNode = child;
+                            maxTau = tau;
+                        }
+
+                    }
+                }
+            }
+        }
+
+        return maxNode;
+    }
+
+
 }

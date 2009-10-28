@@ -20,6 +20,9 @@ package edu.umich.eecs.ai.egat.dominance;
 
 import edu.umich.eecs.ai.egat.game.*;
 
+import java.util.Set;
+import java.util.HashSet;
+
 /**
  * @author Patrick Jordan
  */
@@ -34,22 +37,27 @@ public class SymmetricIteratedDominatedStrategiesEliminatorImpl implements Symme
         this.strategicDominanceTester = strategicDominanceTester;
     }
 
-    public MutableSymmetricGame eliminateDominatedStrategies(MutableSymmetricGame game) {
+    public SymmetricGame eliminateDominatedStrategies(SymmetricGame game) {
         boolean flag = true;
+
+        SymmetricGame reduced = game;
 
         while (flag) {
             flag = false;
 
-            Action[] actions = game.getActions().toArray(new Action[0]);
+            Action[] actions = reduced.getActions().toArray(new Action[0]);
             for (Action action : actions) {
-                if (strategicDominanceTester.isDominated(action, game)) {
+                if (strategicDominanceTester.isDominated(action, reduced)) {
                     flag = true;
 
-                    game.removeAction(action);
+                    Set<Action> candidates = new HashSet<Action>(reduced.getActions());
+                    candidates.remove(action);
+
+                    reduced = new ActionReducedSymmetricGame(reduced, candidates);
                 }
             }
         }
 
-        return game;
+        return reduced;
     }
 }

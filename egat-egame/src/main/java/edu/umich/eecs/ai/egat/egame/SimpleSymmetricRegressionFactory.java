@@ -35,7 +35,8 @@ public class SimpleSymmetricRegressionFactory implements SymmetricRegressionFact
         for(Action a : simulation.getActions())
             game.addAction(a);
 
-
+        game.build();
+        
         for(SymmetricOutcome outcome : Games.symmetricTraversal(simulation)) {
             game.putPayoff(outcome, basicObserver.meanObservationPayoff(outcome).valueMap());
         }

@@ -82,7 +82,13 @@ public class DefaultOutcomeMap<T> implements OutcomeMap<T,Outcome>{
 
         for(int i = 0; i < playerCount; i++) {
             Player p = indexPlayer[i];
-            o = ((List)o).get(playerActionIndex[i].get(outcome.getAction(p)));
+            Integer index = playerActionIndex[i].get(outcome.getAction(p));
+
+            if(o==null || index==null) {
+                return null;
+            } else {                                
+                o = ((List)o).get(index);
+            }
         }
 
         return (T)o;

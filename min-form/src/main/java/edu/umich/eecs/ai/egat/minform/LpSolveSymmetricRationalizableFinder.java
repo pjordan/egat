@@ -272,7 +272,7 @@ public class LpSolveSymmetricRationalizableFinder implements SymmetricRationaliz
 
         SymmetricMultiAgentSystem subGame = new PlayerReducedSymmetricMultiAgentSystem(restrictedGame, otherPlayers);
 
-        double slack = Double.NaN;
+        double slack;
 
         try {
             slack = -rationalizableTau(candidateAction, allPlayers, playerActions, subGame, restrictedGame.getActions(), game);
@@ -281,5 +281,43 @@ public class LpSolveSymmetricRationalizableFinder implements SymmetricRationaliz
         }
 
         return slack;
+    }
+
+    public Action findMaxRationalizableTau(Set<Action> actions, SymmetricGame game) {
+        Set<Action> others = new HashSet<Action>(game.getActions());
+
+        for (Action action : actions) {
+            others.remove(action);
+        }
+
+        return findMaxRationalizableTau(actions, others, game);
+    }
+
+    public Action findMaxRationalizableTau(Set<Action> actions, Set<Action> remaining, SymmetricGame game) {
+        Player[] allPlayers = game.players().toArray(new Player[0]);
+        Action[] playerActions = new Action[allPlayers.length];
+
+        Set<Player> otherPlayers = new HashSet<Player>(game.players());
+        otherPlayers.remove(allPlayers[0]);
+
+        SymmetricMultiAgentSystem subGame = new PlayerReducedSymmetricMultiAgentSystem(new ActionReducedSymmetricGame(game, actions), otherPlayers);
+
+        Action maxRationalizableTau = null;
+        double maxTau = 0.0;
+
+
+        try {
+            for (Action candidateAction : remaining) {
+                double slack = -rationalizableTau(candidateAction, allPlayers, playerActions, subGame, actions, game);
+                if (maxRationalizableTau == null || maxTau < slack) {
+                    maxRationalizableTau = candidateAction;
+                    maxTau = slack;
+                }
+            }
+        } catch (LpSolveException e) {
+            throw new RuntimeException(e);
+        }
+
+        return maxRationalizableTau;
     }
 }

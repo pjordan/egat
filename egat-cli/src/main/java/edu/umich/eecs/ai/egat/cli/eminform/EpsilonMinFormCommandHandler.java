@@ -41,6 +41,10 @@ import java.util.Map;
  * @author Patrick Jordan
  */
 public class EpsilonMinFormCommandHandler extends AbstractGameCommandHandler {
+    private Option breadthOption;
+
+    private boolean breadth;
+
     private Option epsilonGreedyOption;
 
     private boolean epsilonGreedy;
@@ -66,6 +70,10 @@ public class EpsilonMinFormCommandHandler extends AbstractGameCommandHandler {
         final DefaultOptionBuilder defaultOptionBuilder = new DefaultOptionBuilder();
 
         final ArgumentBuilder argumentBuilder = new ArgumentBuilder();
+
+        breadthOption = defaultOptionBuilder.withLongName("breadth").withDescription("run the breadth-first algorithm").create();
+
+        groupBuilder.withOption(breadthOption);
 
         epsilonGreedyOption = defaultOptionBuilder.withLongName("epsilon-greedy").withDescription("run the epsilon greedy algorithm").create();
 
@@ -117,6 +125,7 @@ public class EpsilonMinFormCommandHandler extends AbstractGameCommandHandler {
             maxQueue = Integer.MAX_VALUE;
         }
 
+        breadth = commandLine.hasOption(breadthOption);
         epsilonGreedy = commandLine.hasOption(epsilonGreedyOption);
         tauGreedy = commandLine.hasOption(tauGreedyOption);
     }
@@ -131,9 +140,11 @@ public class EpsilonMinFormCommandHandler extends AbstractGameCommandHandler {
 
             LpSolveSymmetricRationalizableFinder finder = new LpSolveSymmetricRationalizableFinder();
 
-            FormationSearch<SymmetricGame, Set<Action>> search;
+            FormationSearch<SymmetricGame, SymmetricMultiAgentSystem, Set<Action>> search;
 
-            if(epsilonGreedy) {
+            if(breadth) {
+                search = new SymmetricBreadthFirstFormationSearch(game, finder, maxQueue, tolerance);
+            } else if(epsilonGreedy) {
                 search = new SymmetricEpsilonGreedyFormationSearch(game, finder, tolerance);
             } else if(tauGreedy) {
                 search = new SymmetricTauGreedyFormationSearch(game, finder, tolerance);
@@ -163,9 +174,11 @@ public class EpsilonMinFormCommandHandler extends AbstractGameCommandHandler {
 
             LpSolveStrategicRationalizableFinder finder = new LpSolveStrategicRationalizableFinder();
 
-            FormationSearch<StrategicGame, Map<Player,Set<Action>>> search;
+            FormationSearch<StrategicGame, StrategicMultiAgentSystem, Map<Player, Set<Action>>> search;
 
-            if(epsilonGreedy) {
+            if(breadth) {
+                search = new StrategicBreadthFirstFormationSearch(game, finder, maxQueue, tolerance);
+            } else if(epsilonGreedy) {
                 search = new StrategicEpsilonGreedyFormationSearch(game, finder, tolerance);
             } else if(tauGreedy) {
                 search = new StrategicTauGreedyFormationSearch(game, finder, tolerance);

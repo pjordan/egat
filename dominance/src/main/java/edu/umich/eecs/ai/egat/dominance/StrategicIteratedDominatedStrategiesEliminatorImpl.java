@@ -18,9 +18,10 @@
  */
 package edu.umich.eecs.ai.egat.dominance;
 
-import edu.umich.eecs.ai.egat.game.MutableStrategicGame;
-import edu.umich.eecs.ai.egat.game.Player;
-import edu.umich.eecs.ai.egat.game.Action;
+import edu.umich.eecs.ai.egat.game.*;
+
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * @author Patrick Jordan
@@ -36,24 +37,31 @@ public class StrategicIteratedDominatedStrategiesEliminatorImpl implements Strat
         this.strategicDominanceTester = strategicDominanceTester;
     }
 
-    public MutableStrategicGame eliminateDominatedStrategies(MutableStrategicGame game) {
+    public StrategicGame eliminateDominatedStrategies(StrategicGame game) {
         boolean flag = true;
+
+        StrategicGame reduced = game;
 
         while(flag) {
             flag = false;
 
-            for(Player player : game.players()) {
-                Action[] actions = game.getActions(player).toArray(new Action[0]);
+            for(Player player : reduced.players()) {
+
+                Action[] actions = reduced.getActions(player).toArray(new Action[0]);
+
                 for(Action action : actions) {
-                    if(strategicDominanceTester.isDominated(player,action,game)) {
+                    if(strategicDominanceTester.isDominated(player,action,reduced)) {
                         flag = true;
 
-                        game.removeAction(player, action);
+                        Set<Action> candidates = new HashSet<Action>(reduced.getActions(player));
+                        candidates.remove(action);
+
+                        reduced = new ActionReducedStrategicGame(reduced, player, candidates);
                     }
                 }
             }
         }
 
-        return game;
+        return reduced;
     }
 }

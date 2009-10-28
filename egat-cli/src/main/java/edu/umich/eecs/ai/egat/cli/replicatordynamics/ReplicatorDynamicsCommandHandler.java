@@ -22,6 +22,7 @@ import edu.umich.eecs.ai.egat.cli.AbstractGameCommandHandler;
 import edu.umich.eecs.ai.egat.cli.CommandProcessingException;
 import edu.umich.eecs.ai.egat.game.*;
 import edu.umich.eecs.ai.egat.gamexml.ProfileWriter;
+import edu.umich.eecs.ai.egat.replicatordynamics.SymmetricReplicatorDynamics;
 import org.apache.commons.cli2.Option;
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.builder.GroupBuilder;

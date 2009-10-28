@@ -19,6 +19,7 @@
 package edu.umich.eecs.ai.egat.minform.search;
 
 import edu.umich.eecs.ai.egat.game.StrategicGame;
+import edu.umich.eecs.ai.egat.game.MultiAgentSystem;
 
 import java.util.Queue;
 import java.util.Map;
@@ -28,7 +29,7 @@ import java.util.PriorityQueue;
 /**
  * @author Patrick R. Jordan
  */
-public abstract class EpsilonGreedyFormationSearch<T extends StrategicGame,S> implements FormationSearch<T,S> {
+public abstract class EpsilonGreedyFormationSearch<T extends StrategicGame,M extends MultiAgentSystem, S> implements FormationSearch<T,M,S> {
     private T base;
 
     public EpsilonGreedyFormationSearch(T base) {
@@ -61,6 +62,37 @@ public abstract class EpsilonGreedyFormationSearch<T extends StrategicGame,S> im
 
         return best;
     }
+
+    public FormationSearchNode<T,S> run(M bound) {
+        FormationSearchNode<T,S> best = null;
+
+        Queue<FormationSearchNode<T,S>> queue = new PriorityQueue<FormationSearchNode<T,S>>();
+        Map<S,FormationSearchNode<T,S>> nodes = new HashMap<S,FormationSearchNode<T,S>>();
+
+        initialNodes(base, queue, nodes, bound);
+
+        while(!queue.isEmpty()) {
+            FormationSearchNode<T,S> node = queue.poll();
+
+            if(best == null || node.compareTo(best) < 0) {
+                best = node;
+            }
+
+            if(best.getValue() < Double.MIN_VALUE) {
+                return best;
+            }
+
+            queue.clear();
+
+            expandNode(node, queue, nodes, bound);
+        }
+
+        return best;
+    }
+
+    protected abstract void initialNodes(T base, Queue<FormationSearchNode<T,S>> queue, Map<S,FormationSearchNode<T,S>> nodes, M bound);
+
+    protected abstract void expandNode(FormationSearchNode<T,S> node, Queue<FormationSearchNode<T,S>> queue, Map<S,FormationSearchNode<T,S>> nodes, M bound);
 
     protected abstract void initialNodes(T base, Queue<FormationSearchNode<T,S>> queue, Map<S,FormationSearchNode<T,S>> nodes, int bound);
 

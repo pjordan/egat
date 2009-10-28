@@ -25,24 +25,32 @@ import java.util.*;
  */
 public class DefaultSymmetricGame<T extends PayoffValue> extends AbstractStrategicGame<T> implements MutableSymmetricGame<T> {
     private Set<Action> actions;
-    private Map<Object, Map<Action,T>> outcomePayoffs;
-
+    private Map<Object, Map<Action, T>> outcomePayoffs;
+    private DefaultOutcomeMap<SymmetricPayoff<T>> outcomeMap;
 
     public DefaultSymmetricGame() {
         actions = new HashSet<Action>();
-        outcomePayoffs = new HashMap<Object, Map<Action,T>>();
+        outcomePayoffs = new HashMap<Object, Map<Action, T>>();
+        outcomeMap = new DefaultOutcomeMap<SymmetricPayoff<T>>();
     }
 
     public DefaultSymmetricGame(String name) {
         super(name);
         actions = new HashSet<Action>();
-        outcomePayoffs = new HashMap<Object, Map<Action,T>>();
+        outcomePayoffs = new HashMap<Object, Map<Action, T>>();
+        outcomeMap = new DefaultOutcomeMap<SymmetricPayoff<T>>();
     }
+
 
     public DefaultSymmetricGame(String name, String description) {
         super(name, description);
         actions = new HashSet<Action>();
-        outcomePayoffs = new HashMap<Object, Map<Action,T>>();
+        outcomePayoffs = new HashMap<Object, Map<Action, T>>();
+        outcomeMap = new DefaultOutcomeMap<SymmetricPayoff<T>>();
+    }
+
+    public void build() {
+        outcomeMap.build(this);
     }
 
     public Set<Action> getActions() {
@@ -54,17 +62,29 @@ public class DefaultSymmetricGame<T extends PayoffValue> extends AbstractStrateg
     }
 
     public SymmetricPayoff<T> payoff(Outcome outcome) throws NonexistentPayoffException {
-        SymmetricOutcome so = Games.createSymmetricOutcome(outcome);
+        SymmetricPayoff<T> payoff = outcomeMap.get(outcome);
 
-        if (so==null)
-            throw new NonexistentPayoffException(outcome);
-        
-        Map<Action,T> payoffs = outcomePayoffs.get(so.actionEntrySet());
+        if (payoff == null) {
+            SymmetricOutcome so = Games.createSymmetricOutcome(outcome);
 
-        if( payoffs==null)
-            throw new NonexistentPayoffException(outcome);
 
-        return PayoffFactory.createSymmetricPayoff(payoffs,outcome);
+            if (so == null)
+                throw new NonexistentPayoffException(outcome);
+
+
+            Map<Action, T> payoffs = outcomePayoffs.get(so.actionEntrySet());
+
+
+            if (payoffs == null)
+                throw new NonexistentPayoffException(outcome);
+
+
+            payoff = PayoffFactory.createSymmetricPayoff(payoffs, outcome);
+
+            outcomeMap.put(outcome, payoff);
+        }
+
+        return payoff;
     }
 
     public void addAction(Action action) {
@@ -83,9 +103,9 @@ public class DefaultSymmetricGame<T extends PayoffValue> extends AbstractStrateg
         actions.clear();
     }
 
-    public void putPayoff(Outcome outcome, Map<Action,T> values) {
+    public void putPayoff(Outcome outcome, Map<Action, T> values) {
         SymmetricOutcome so = Games.createSymmetricOutcome(outcome);
 
-        outcomePayoffs.put(so.actionEntrySet(),values);
+        outcomePayoffs.put(so.actionEntrySet(), values);
     }
 }

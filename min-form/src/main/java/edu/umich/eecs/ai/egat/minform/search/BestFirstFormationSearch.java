@@ -19,13 +19,14 @@
 package edu.umich.eecs.ai.egat.minform.search;
 
 import edu.umich.eecs.ai.egat.game.StrategicGame;
+import edu.umich.eecs.ai.egat.game.MultiAgentSystem;
 
 import java.util.*;
 
 /**
  * @author Patrick R. Jordan
  */
-public abstract class BestFirstFormationSearch<T extends StrategicGame,S> implements FormationSearch<T,S> {
+public abstract class BestFirstFormationSearch<T extends StrategicGame, M extends MultiAgentSystem, S> implements FormationSearch<T, M, S> {
     private T base;
     private int maxQueueSize;
 
@@ -38,25 +39,25 @@ public abstract class BestFirstFormationSearch<T extends StrategicGame,S> implem
         this(base, Integer.MAX_VALUE);
     }
 
-    public FormationSearchNode<T,S> run(int bound) {
-        FormationSearchNode<T,S> best = null;
+    public FormationSearchNode<T, S> run(int bound) {
+        FormationSearchNode<T, S> best = null;
 
-        PriorityQueue<FormationSearchNode<T,S>> queue = new PriorityQueue<FormationSearchNode<T,S>>();
-        Map<S,FormationSearchNode<T,S>> nodes = new HashMap<S,FormationSearchNode<T,S>>();
+        PriorityQueue<FormationSearchNode<T, S>> queue = new PriorityQueue<FormationSearchNode<T, S>>();
+        Map<S, FormationSearchNode<T, S>> nodes = new HashMap<S, FormationSearchNode<T, S>>();
 
         initialNodes(base, queue, nodes, bound);
 
 
         maintainQueue(queue);
 
-        while(!queue.isEmpty()) {
-            FormationSearchNode<T,S> node = queue.poll();
+        while (!queue.isEmpty()) {
+            FormationSearchNode<T, S> node = queue.poll();
 
-            if(best == null || node.compareTo(best) < 0) {
+            if (best == null || node.compareTo(best) < 0) {
                 best = node;
             }
 
-            if(best.getValue() < Double.MIN_VALUE) {
+            if (best.getValue() < Double.MIN_VALUE) {
                 return best;
             }
 
@@ -68,18 +69,102 @@ public abstract class BestFirstFormationSearch<T extends StrategicGame,S> implem
         return best;
     }
 
-    protected abstract void initialNodes(T base, Queue<FormationSearchNode<T,S>> queue, Map<S,FormationSearchNode<T,S>> nodes, int bound);
+    public FormationSearchNode<T, S> run(M bound) {
+        FormationSearchNode<T, S> best = null;
 
-    protected abstract void expandNode(FormationSearchNode<T,S> node, Queue<FormationSearchNode<T,S>> queue, Map<S,FormationSearchNode<T,S>> nodes, int bound);
+        PriorityQueue<FormationSearchNode<T, S>> queue = new PriorityQueue<FormationSearchNode<T, S>>();
+        Map<S, FormationSearchNode<T, S>> nodes = new HashMap<S, FormationSearchNode<T, S>>();
+
+        initialNodes(base, queue, nodes, bound);
+
+
+        maintainQueue(queue);
+
+        while (!queue.isEmpty()) {
+            FormationSearchNode<T, S> node = queue.poll();
+
+            if (best == null || node.compareTo(best) < 0) {
+                best = node;
+            }
+
+            if (best.getValue() < Double.MIN_VALUE) {
+                return best;
+            }
+
+            expandNode(node, queue, nodes, bound);
+
+            maintainQueue(queue);
+        }
+
+        return best;
+    }
+
+    public FormationSearchNode<T, S> run(M bound, Set<S> exclusionList) {
+        FormationSearchNode<T, S> best = null;
+
+        PriorityQueue<FormationSearchNode<T, S>> queue = new PriorityQueue<FormationSearchNode<T, S>>();
+        Map<S, FormationSearchNode<T, S>> nodes = new HashMap<S, FormationSearchNode<T, S>>();
+
+        initialNodes(base, queue, nodes, bound);
+
+
+        maintainQueue(queue, exclusionList);
+
+        while (!queue.isEmpty()) {
+            FormationSearchNode<T, S> node = queue.poll();
+
+            if (best == null || node.compareTo(best) < 0) {
+                best = node;
+            }
+
+            if (best.getValue() < Double.MIN_VALUE) {
+                return best;
+            }
+
+            expandNode(node, queue, nodes, bound);
+
+            maintainQueue(queue, exclusionList);
+        }
+
+        return best;
+    }
+
+    protected abstract void initialNodes(T base, Queue<FormationSearchNode<T, S>> queue, Map<S, FormationSearchNode<T, S>> nodes, M bound);
+
+    protected abstract void expandNode(FormationSearchNode<T, S> node, Queue<FormationSearchNode<T, S>> queue, Map<S, FormationSearchNode<T, S>> nodes, M bound);
+
+    protected abstract void initialNodes(T base, Queue<FormationSearchNode<T, S>> queue, Map<S, FormationSearchNode<T, S>> nodes, int bound);
+
+    protected abstract void expandNode(FormationSearchNode<T, S> node, Queue<FormationSearchNode<T, S>> queue, Map<S, FormationSearchNode<T, S>> nodes, int bound);
 
     public T getBase() {
         return base;
     }
 
-    private void maintainQueue(Queue<FormationSearchNode<T,S>> queue) {
-        if(queue.size()>maxQueueSize) {
-            
-            List<FormationSearchNode<T,S>> list = new ArrayList<FormationSearchNode<T,S>>(queue);
+    private void maintainQueue(Queue<FormationSearchNode<T, S>> queue) {
+        if (queue.size() > maxQueueSize) {
+
+            List<FormationSearchNode<T, S>> list = new ArrayList<FormationSearchNode<T, S>>(queue);
+            Collections.sort(list);
+
+            queue.removeAll(list.subList(maxQueueSize, queue.size()));
+        }
+    }
+
+    private void maintainQueue(Queue<FormationSearchNode<T, S>> queue, Set<S> exclusionList) {
+
+        List<FormationSearchNode<T, S>> list = new ArrayList<FormationSearchNode<T, S>>(queue);
+
+        for(FormationSearchNode<T, S> node : list) {
+            if(exclusionList.contains(node.getKey())) {
+                queue.remove(node);
+            }
+        }
+
+
+        if (queue.size() > maxQueueSize) {
+
+            list = new ArrayList<FormationSearchNode<T, S>>(queue);
             Collections.sort(list);
 
             queue.removeAll(list.subList(maxQueueSize, queue.size()));

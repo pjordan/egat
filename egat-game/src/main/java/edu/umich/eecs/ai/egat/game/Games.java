@@ -18,6 +18,8 @@
  */
 package edu.umich.eecs.ai.egat.game;
 
+import com.sun.tools.example.debug.bdi.MethodNotFoundException;
+
 import java.util.*;
 
 
@@ -69,8 +71,112 @@ public final class Games {
      * @return the strategy
      */
     public static Strategy createPureStrategy(Action action) {
-        return createStrategy(new Action[] { action }, new Number[] {1.0});
+        return new PureStrategy(action);
     }
+
+    static class PureStrategy implements Strategy {
+        private static final Number ZERO = 0.0;
+
+        private static final Number ONE = 1.0;
+
+        private static final Collection<Number> PROBABILITIES;
+
+        static {
+            Collection<Number> c = new ArrayList<Number>();
+            c.add(ONE);
+            PROBABILITIES = Collections.unmodifiableCollection(c);
+        }
+
+        private Action action;
+
+        private Set<Action> actions;
+
+        private Map.Entry<Action, Number> entry;
+
+        private Set<Map.Entry<Action, Number>> entrySet;
+
+        PureStrategy(final Action action) {
+            this.action = action;
+
+            actions = new HashSet<Action>();
+            actions.add(action);
+
+
+            entry = new Map.Entry<Action, Number>() {
+                public Action getKey() {
+                    return action;
+                }
+
+                public Number getValue() {
+                    return ONE;
+                }
+
+                public Number setValue(Number value) {
+                    throw new UnsupportedOperationException();
+                }
+
+                @Override
+                public int hashCode() {
+                    return (getKey() == null ? 0 : getKey().hashCode()) ^
+                            (getValue() == null ? 0 : getValue().hashCode());
+                }
+
+                @Override
+                public boolean equals(Object object) {
+                    if (!(object instanceof Map.Entry)) {
+                        return false;
+                    }
+
+                    Map.Entry e = (Map.Entry) object;
+
+                    return (getKey() == null ?
+                            e.getKey() == null : getKey().equals(e.getKey())) &&
+                            (getValue() == null ?
+                                    e.getValue() == null : getValue().equals(e.getValue()));
+                }
+            };
+
+            entrySet = new HashSet<Map.Entry<Action, Number>>();
+            entrySet.add(entry);
+        }
+
+        public Number getProbability(Action action) {
+            if (this.action.equals(action))
+                return ONE;
+            else
+                return ZERO;
+        }
+
+        public Set<Action> actions() {
+            return actions;
+        }
+
+        public Set<Map.Entry<Action, Number>> entrySet() {
+            return entrySet;
+        }
+
+        public Collection<Number> probabilities() {
+            return PROBABILITIES;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Strategy)) return false;
+
+            Strategy that = (Strategy) o;
+
+            if (entrySet() != null ? !entrySet().equals(that.entrySet()) : that.entrySet() != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return entrySet() != null ? entrySet().hashCode() : 0;
+        }
+    }
+
     /**
      * Create an outcome traversal object for a strategic simulation.
      *
@@ -127,10 +233,7 @@ public final class Games {
             }
 
             public Outcome next() {
-                List<Action> actions = iterator.next();
-                OutcomeImpl oc = new OutcomeImpl(players.toArray(new Player[0]),
-                        actions.toArray(new Action[0]));
-                return oc;
+                return new ArrayListOutcomeImpl(players, iterator.next());
             }
 
             public void remove() {
@@ -231,7 +334,7 @@ public final class Games {
 
             public SymmetricOutcome next() {
                 final List<Action> actions = iterator.next();
-                final SymmetricOutcome oc = Games.createSymmetricOutcome(players.toArray(new Player[0]), actions.toArray(new Action[0]));
+                final SymmetricOutcome oc = Games.createSymmetricOutcome(players, actions);
                 return oc;
             }
 
@@ -319,7 +422,18 @@ public final class Games {
      * @return the outcome represented by the mapping between the players and actions.
      */
     public static Outcome createOutcome(final Player[] players, final Action[] actions) {
-        return new OutcomeImpl(players, actions);
+        return new ArrayListOutcomeImpl(Arrays.asList(players), Arrays.asList(actions));
+    }
+
+    /**
+     * Create an outcome by wrapping the players and actions arrays.
+     *
+     * @param players the array of players in the outcome.
+     * @param actions the array of actions in the outcome.
+     * @return the outcome represented by the mapping between the players and actions.
+     */
+    public static Outcome createOutcome(final List<? extends Player> players, final List<? extends Action> actions) {
+        return new ArrayListOutcomeImpl(new ArrayList<Player>(players), new ArrayList<Action>(actions));
     }
 
     /**
@@ -341,7 +455,7 @@ public final class Games {
                 actions[i] = outcome.getAction(players[i]);
         }
 
-        return new OutcomeImpl(players, actions);
+        return new ArrayListOutcomeImpl(Arrays.asList(players), Arrays.asList(actions));
     }
 
     /**
@@ -366,6 +480,17 @@ public final class Games {
     }
 
     /**
+     * Create a symmetric outcome by wrapping the players and actions arrays.
+     *
+     * @param players the array of players in the outcome.
+     * @param actions the array of actions in the outcome.
+     * @return the outcome represented by the mapping between the players and actions.
+     */
+    public static SymmetricOutcome createSymmetricOutcome(final List<? extends Player> players, final List<? extends Action> actions) {
+        return createSymmetricOutcome(createOutcome(players, actions));
+    }
+
+    /**
      * Create a strategy by wrapping the actions and probabilities arrays.
      *
      * @param actions      the array of actions in the strategy.
@@ -373,6 +498,17 @@ public final class Games {
      * @return the strategy represented by the mapping between the players and values.
      */
     public static Strategy createStrategy(final Action[] actions, final Number[] distribution) {
+        return new StrategyImpl(actions, distribution);
+    }
+
+    /**
+     * Create a strategy by wrapping the actions and probabilities arrays.
+     *
+     * @param actions      the array of actions in the strategy.
+     * @param distribution the array of probabilities in the strategy.
+     * @return the strategy represented by the mapping between the players and values.
+     */
+    public static Strategy createStrategy(final List<? extends Action> actions, final List<? extends Number> distribution) {
         return new StrategyImpl(actions, distribution);
     }
 
@@ -486,8 +622,128 @@ public final class Games {
         }
     }
 
+    static class ArrayListOutcomeImpl implements Outcome {
+        private List<Player> players;
+        private List<Action> actions;
+        private Set<Player> playerSet;
+        private Set<Map.Entry<Player, Action>> entrySet;
+        private int hashCode;
+
+        ArrayListOutcomeImpl(List<Player> players, List<Action> actions) {
+            this.players = players;
+            this.actions = actions;
+        }
+
+        public Action getAction(Player player) {
+
+            int index = findPlayer(player);
+
+            if (index < 0) {
+                return null;
+            } else {
+                return actions.get(index);
+            }
+        }
+
+        public Set<Player> players() {
+            if (playerSet == null) {
+                this.playerSet = new HashSet<Player>(players);
+            }
+            return playerSet;
+        }
+
+        public Set<Map.Entry<Player, Action>> entrySet() {
+            if (entrySet == null) {
+                entrySet = new HashSet<Map.Entry<Player, Action>>();
+                for (int i = 0; i < players.size(); i++) {
+                    entrySet.add(new OutcomeEntry(i));
+                }
+            }
+            return entrySet;
+        }
+
+        public Collection<Action> actions() {
+            return actions;
+        }
+
+        private int findPlayer(Player player) {
+            for (int i = 0; i < players.size(); i++) {
+                if (players.get(i).equals(player)) {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private class OutcomeEntry implements Map.Entry<Player, Action> {
+            private int index;
+
+            private OutcomeEntry(int index) {
+                this.index = index;
+            }
+
+            public Player getKey() {
+                return players.get(index);
+            }
+
+            public Action getValue() {
+                return actions.get(index);
+            }
+
+            public Action setValue(Action value) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public int hashCode() {
+                return (getKey() == null ? 0 : getKey().hashCode()) ^
+                        (getValue() == null ? 0 : getValue().hashCode());
+            }
+
+            @Override
+            public boolean equals(Object object) {
+                if (!(object instanceof Map.Entry)) {
+                    return false;
+                }
+
+                Map.Entry e = (Map.Entry) object;
+
+                return (getKey() == null ?
+                        e.getKey() == null : getKey().equals(e.getKey())) &&
+                        (getValue() == null ?
+                                e.getValue() == null : getValue().equals(e.getValue()));
+            }
+        }
+
+        @Override
+        public int hashCode() {
+
+            if (entrySet == null) {
+                hashCode = entrySet().hashCode();
+            }
+
+            return hashCode;
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            if (!(object instanceof Outcome)) {
+                return false;
+            }
+
+            Outcome o = (Outcome) object;
+
+            return entrySet().equals(o.entrySet());
+        }
+    }
+
     static class OutcomeImpl extends UnmodifiableReducedMapImpl<Player, Action> implements Outcome {
         public OutcomeImpl(Player[] players, Action[] actions) {
+            super(players, actions);
+        }
+
+        public OutcomeImpl(List<? extends Player> players, List<? extends Action> actions) {
             super(players, actions);
         }
 
@@ -522,6 +778,10 @@ public final class Games {
 
     static class StrategyImpl extends UnmodifiableReducedMapImpl<Action, Number> implements Strategy {
         public StrategyImpl(Action[] keys, Number[] values) {
+            super(keys, values);
+        }
+
+        public StrategyImpl(List<? extends Action> keys, List<? extends Number> values) {
             super(keys, values);
         }
 
@@ -563,6 +823,18 @@ public final class Games {
             map = new HashMap<T, S>();
             for (int i = 0; i < keys.length; i++) {
                 map.put(keys[i], values[i]);
+            }
+            map = Collections.unmodifiableMap(map);
+            hashCode = map.hashCode();
+        }
+
+        protected UnmodifiableReducedMapImpl(List<? extends T> keys, List<? extends S> values) throws IllegalArgumentException {
+            if (keys.size() != values.size())
+                throw new IllegalArgumentException("key array not same size as values");
+
+            map = new HashMap<T, S>();
+            for (int i = 0, n = keys.size(); i < n; i++) {
+                map.put(keys.get(i), values.get(i));
             }
             map = Collections.unmodifiableMap(map);
             hashCode = map.hashCode();
@@ -678,16 +950,16 @@ public final class Games {
         otherActions.remove(action);
 
         for (SymmetricOutcome outcome : Games.symmetricTraversal(game)) {
-            if(outcome.getCount(action) > 0) {
+            if (outcome.getCount(action) > 0) {
                 Player[] players = outcome.players().toArray(new Player[0]);
                 Action[] actions = new Action[players.length];
 
                 int index = -1;
 
-                for(int i = 0; i < players.length; i++) {
+                for (int i = 0; i < players.length; i++) {
                     actions[i] = outcome.getAction(players[i]);
 
-                    if(action.equals(actions[i])) {
+                    if (action.equals(actions[i])) {
                         index = i;
                     }
                 }
@@ -695,14 +967,14 @@ public final class Games {
 
                 double outcomePayoff = game.payoff(outcome).getPayoff(action).getValue();
 
-                for(Action other : otherActions) {
+                for (Action other : otherActions) {
                     actions[index] = other;
-                    SymmetricOutcome deviation = Games.createSymmetricOutcome(players,actions);
+                    SymmetricOutcome deviation = Games.createSymmetricOutcome(players, actions);
 
                     double otherPayoff = game.payoff(deviation).getPayoff(other).getValue();
                     epsilon = Math.max(epsilon, otherPayoff - outcomePayoff);
                 }
-            }                                    
+            }
         }
 
         return epsilon;
@@ -715,16 +987,16 @@ public final class Games {
         otherActions.remove(action);
 
         for (Outcome outcome : Games.traversal(game)) {
-            if(action.equals(outcome.getAction(player))) {
+            if (action.equals(outcome.getAction(player))) {
                 Player[] players = outcome.players().toArray(new Player[0]);
                 Action[] actions = new Action[players.length];
 
                 int index = -1;
 
-                for(int i = 0; i < players.length; i++) {
+                for (int i = 0; i < players.length; i++) {
                     actions[i] = outcome.getAction(players[i]);
 
-                    if(player.equals(players[i])) {
+                    if (player.equals(players[i])) {
                         index = i;
                     }
                 }
@@ -732,9 +1004,9 @@ public final class Games {
 
                 double outcomePayoff = game.payoff(outcome).getPayoff(player).getValue();
 
-                for(Action other : otherActions) {
+                for (Action other : otherActions) {
                     actions[index] = other;
-                    Outcome deviation = Games.createOutcome(players,actions);
+                    Outcome deviation = Games.createOutcome(players, actions);
 
                     double otherPayoff = game.payoff(deviation).getPayoff(player).getValue();
                     epsilon = Math.max(epsilon, otherPayoff - outcomePayoff);
@@ -748,9 +1020,8 @@ public final class Games {
     public static double regret(SymmetricOutcome outcome, SymmetricGame game) {
         double epsilon = 0.0;
 
-        for (SymmetricOutcome deviation : DeviationFactory.deviationTraversal(outcome, game)) {
-            Player[] players = findDeviatingPlayers(deviation, outcome);
-            epsilon = Math.max(epsilon, deviationGain(game.payoff(outcome), game.payoff(deviation), players));
+        for (Player player : game.players()) {
+            epsilon = Math.max(epsilon, playerRegret(game, outcome, player));
         }
 
         return epsilon;
@@ -760,33 +1031,86 @@ public final class Games {
         double epsilon = 0.0;
 
         for (Player player : game.players()) {
-            for (Outcome deviation : DeviationFactory.deviationTraversal(outcome, game, player)) {
-                epsilon = Math.max(epsilon, deviationGain(game.payoff(outcome), game.payoff(deviation), player));
-            }
+            epsilon = Math.max(epsilon, playerRegret(game, outcome, player));
         }
+
         return epsilon;
     }
-
 
 
     public static double regret(Profile profile, StrategicGame game) {
         double epsilon = 0.0;
 
         for (Player player : game.players()) {
-            for(Action action : game.getActions(player)) {
-                epsilon = Math.max(epsilon, playerGain(game, profile, player, action));        
-            }
+            epsilon = Math.max(epsilon, playerRegret(game, profile, player));
         }
 
         return epsilon;
+    }
+
+    public static double playerRegret(StrategicGame game, Outcome outcome, Player player) {
+        Player[] players = outcome.players().toArray(new Player[0]);
+        Action[] actions = new Action[players.length];
+        double regret = 0.0;
+
+        int playerIndex = -1;
+        for (int i = 0; i < players.length; i++) {
+            if (players[i].equals(player)) {
+                playerIndex = i;
+            } else {
+                actions[i] = outcome.getAction(players[i]);
+            }
+        }
+
+        double originalPayoff = game.payoff(outcome).getPayoff(player).getValue();
+
+        for (Action action : game.getActions(player)) {
+
+            actions[playerIndex] = action;
+
+            double deviatingPayoff = game.payoff(Games.createOutcome(players, actions)).getPayoff(player).getValue();
+
+            regret = Math.max(regret, deviatingPayoff - originalPayoff);
+        }
+
+        return regret;
+    }
+
+    public static double playerRegret(StrategicGame game, Profile profile, Player player) {
+        Player[] players = profile.players().toArray(new Player[0]);
+        Strategy[] strategies = new Strategy[players.length];
+        double regret = 0.0;
+
+
+        int playerIndex = -1;
+        for (int i = 0; i < players.length; i++) {
+            if (players[i].equals(player)) {
+                playerIndex = i;
+            } else {
+                strategies[i] = profile.getStrategy(players[i]);
+            }
+        }
+
+        double originalPayoff = game.payoff(profile).getPayoff(player).getValue();
+
+        for (Action action : game.getActions(player)) {
+
+            strategies[playerIndex] = Games.createPureStrategy(action);
+
+            double deviatingPayoff = game.payoff(Games.createProfile(players, strategies)).getPayoff(player).getValue();
+
+            regret = Math.max(regret, deviatingPayoff - originalPayoff);
+        }
+
+        return regret;
     }
 
     public static double playerGain(StrategicGame game, Outcome outcome, Player player, Action action) {
         Player[] players = outcome.players().toArray(new Player[0]);
         Action[] actions = new Action[players.length];
 
-        for(int i = 0; i < players.length; i++) {
-            if(players[i].equals(player)) {
+        for (int i = 0; i < players.length; i++) {
+            if (players[i].equals(player)) {
                 actions[i] = action;
             } else {
                 actions[i] = outcome.getAction(players[i]);
@@ -794,7 +1118,7 @@ public final class Games {
         }
 
         double originalPayoff = game.payoff(outcome).getPayoff(player).getValue();
-        double deviatingPayoff = game.payoff(Games.createOutcome(players,actions)).getPayoff(player).getValue();
+        double deviatingPayoff = game.payoff(Games.createOutcome(players, actions)).getPayoff(player).getValue();
 
         return deviatingPayoff - originalPayoff;
     }
@@ -803,8 +1127,8 @@ public final class Games {
         Player[] players = profile.players().toArray(new Player[0]);
         Strategy[] strategies = new Strategy[players.length];
 
-        for(int i = 0; i < players.length; i++) {
-            if(players[i].equals(player)) {
+        for (int i = 0; i < players.length; i++) {
+            if (players[i].equals(player)) {
                 strategies[i] = strategy;
             } else {
                 strategies[i] = profile.getStrategy(players[i]);
@@ -812,7 +1136,7 @@ public final class Games {
         }
 
         double originalPayoff = game.payoff(profile).getPayoff(player).getValue();
-        double deviatingPayoff = game.payoff(Games.createProfile(players,strategies)).getPayoff(player).getValue();
+        double deviatingPayoff = game.payoff(Games.createProfile(players, strategies)).getPayoff(player).getValue();
 
         return deviatingPayoff - originalPayoff;
     }
@@ -854,7 +1178,7 @@ public final class Games {
 
         StrategicGame reducedGame = game;
 
-        for(int i = 0; i < players.length; i++) {
+        for (int i = 0; i < players.length; i++) {
             reducedGame = new ActionReducedStrategicGame(reducedGame, players[i], profile.getStrategy(players[i]).actions());
         }
 

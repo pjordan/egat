@@ -19,10 +19,12 @@
 package edu.umich.eecs.ai.egat.minform.search;
 
 import edu.umich.eecs.ai.egat.game.StrategicGame;
+import edu.umich.eecs.ai.egat.game.MultiAgentSystem;
 
 /**
  * @author Patrick R. Jordan
  */
-public interface FormationSearch<T extends StrategicGame,S> {
+public interface FormationSearch<T extends StrategicGame,M extends MultiAgentSystem, S> {
     FormationSearchNode<T,S> run(int bound);
+    FormationSearchNode<T,S> run(M bound);
 }

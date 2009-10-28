@@ -32,6 +32,7 @@ import edu.umich.eecs.ai.egat.gamexml.StrategicGameHandler;
 import edu.umich.eecs.ai.egat.game.DefaultStrategicGame;
 import edu.umich.eecs.ai.egat.game.Player;
 import edu.umich.eecs.ai.egat.game.Games;
+import edu.umich.eecs.ai.egat.game.StrategicGame;
 
 /**
  * @author Patrick Jordan
@@ -53,13 +54,13 @@ public class StrategicIteratedDominatedStrategiesEliminatorImplTest {
 
         StrategicIteratedDominatedStrategiesEliminatorImpl eliminator = new StrategicIteratedDominatedStrategiesEliminatorImpl();
 
-        eliminator.eliminateDominatedStrategies(game);
+        StrategicGame reduced = eliminator.eliminateDominatedStrategies(game);
 
         Player alice = Games.createPlayer("alice");
         Player bob = Games.createPlayer("bob");
 
-        assertEquals(game.getActions(alice).size(),1,0);
-        assertEquals(game.getActions(bob).size(),1,0);
+        assertEquals(reduced.getActions(alice).size(),1,0);
+        assertEquals(reduced.getActions(bob).size(),1,0);
 
         parser.parse( DominanceUtilsTest.class.getResourceAsStream("/strategic.xml") , handler);
 
@@ -67,9 +68,9 @@ public class StrategicIteratedDominatedStrategiesEliminatorImplTest {
 
         eliminator = new StrategicIteratedDominatedStrategiesEliminatorImpl(new PureStrategicDominanceTesterImpl());
 
-        eliminator.eliminateDominatedStrategies(game);
+        reduced = eliminator.eliminateDominatedStrategies(game);
 
-        assertEquals(game.getActions(alice).size(),1,0);
-        assertEquals(game.getActions(bob).size(),1,0);
+        assertEquals(reduced.getActions(alice).size(),1,0);
+        assertEquals(reduced.getActions(bob).size(),1,0);
     }
 }

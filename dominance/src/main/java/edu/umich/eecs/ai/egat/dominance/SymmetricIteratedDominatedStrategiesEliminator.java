@@ -19,10 +19,11 @@
 package edu.umich.eecs.ai.egat.dominance;
 
 import edu.umich.eecs.ai.egat.game.MutableSymmetricGame;
+import edu.umich.eecs.ai.egat.game.SymmetricGame;
 
 /**
  * @author Patrick Jordan
  */
 public interface SymmetricIteratedDominatedStrategiesEliminator {
-    MutableSymmetricGame eliminateDominatedStrategies(MutableSymmetricGame game);
+    SymmetricGame eliminateDominatedStrategies(SymmetricGame game);
 }

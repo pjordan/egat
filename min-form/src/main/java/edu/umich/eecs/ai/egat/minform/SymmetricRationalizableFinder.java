@@ -88,4 +88,12 @@ public interface SymmetricRationalizableFinder {
      * @return the slack from the rationalizable LP
      */
     double rationalizableEpsilon(SymmetricMultiAgentSystem restrictedGame, SymmetricGame game);
+
+    /**
+     * Returns the strategy that maximizes tau
+     * @param actions the restricted set of strategies
+     * @param game the base game
+     * @return the strategy that maximizes tau
+     */
+    Action findMaxRationalizableTau(Set<Action> actions, SymmetricGame game);
 }

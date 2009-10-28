@@ -45,7 +45,7 @@ public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTest
         if(playerActions.length<1) {
             return false;
         }
-        
+
         Player player = players[0];
         List<SymmetricOutcome> subOutcomes = createSubgameOutcomes(player, game);
 
@@ -126,7 +126,7 @@ public class MixedSymmetricDominanceTesterImpl implements SymmetricDominanceTest
 
                 /* set the objective in lpsolve */
                 lp.setObjFnex(playerActions.length+1, row, colno);
-                
+
             }
 
             if (ret == 0) {

@@ -65,7 +65,8 @@ public class SymmetricGameTest {
         game.addPlayer(player2);
         game.addAllActions(actions);
 
-
+        game.build();
+        
         Map<Action, PayoffValue> payoff11 = new HashMap<Action, PayoffValue>();
         payoff11.put(c, PayoffFactory.createPayoffValue(3.0));
         Map<Action, PayoffValue> payoff12 = new HashMap<Action, PayoffValue>();

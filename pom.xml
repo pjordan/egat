@@ -31,6 +31,7 @@
 	<module>dominance</module>
 	<module>graphical-game</module>
     <module>graphical-egame</module>
+    <module>replicator-dynamics</module>
   </modules>
   <repositories>
     <repository>

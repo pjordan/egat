@@ -32,6 +32,7 @@ import edu.umich.eecs.ai.egat.cli.robustregret.RobustRegretCommandHandler;
 import edu.umich.eecs.ai.egat.cli.strategyregret.StrategyRegretCommandHandler;
 import edu.umich.eecs.ai.egat.cli.minform.MinFormCommandHandler;
 import edu.umich.eecs.ai.egat.cli.eminform.EpsilonMinFormCommandHandler;
+import edu.umich.eecs.ai.egat.cli.removeaction.RemoveActionCommandHandler;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -126,6 +127,7 @@ public class Main {
         commandHandlers.add(new StrategyRegretCommandHandler());
         commandHandlers.add(new MinFormCommandHandler());
         commandHandlers.add(new EpsilonMinFormCommandHandler());
+        commandHandlers.add(new RemoveActionCommandHandler());
         return commandHandlers;
     }
 

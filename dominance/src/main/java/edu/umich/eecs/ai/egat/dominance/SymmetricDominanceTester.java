@@ -18,9 +18,7 @@
  */
 package edu.umich.eecs.ai.egat.dominance;
 
-import edu.umich.eecs.ai.egat.game.Action;
-import edu.umich.eecs.ai.egat.game.Strategy;
-import edu.umich.eecs.ai.egat.game.SymmetricGame;
+import edu.umich.eecs.ai.egat.game.*;
 
 /**
  * @author Patrick Jordan

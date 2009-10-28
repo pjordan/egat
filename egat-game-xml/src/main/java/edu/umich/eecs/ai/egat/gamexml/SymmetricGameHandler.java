@@ -156,7 +156,7 @@ public class SymmetricGameHandler extends DefaultHandler {
     }
 
     private void handleEndPayoffs() throws SAXException {
-
+        game.build();
     }
 
     private void handleEndOutcome() throws SAXException {

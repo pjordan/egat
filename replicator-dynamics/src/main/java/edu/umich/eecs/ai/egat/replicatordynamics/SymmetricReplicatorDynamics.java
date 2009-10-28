@@ -16,9 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package edu.umich.eecs.ai.egat.game;
+package edu.umich.eecs.ai.egat.replicatordynamics;
+
+import edu.umich.eecs.ai.egat.game.*;
 
 import java.util.Set;
+import java.util.Arrays;
 import java.io.PrintStream;
 
 /**
@@ -47,71 +50,58 @@ public class SymmetricReplicatorDynamics {
 
         Player[] players = game.players().toArray(new Player[0]);
 
-        Strategy[] strategies = new Strategy[players.length];
+        PayoffMatrix pm = createPayoffMatrix(game, players, actions);
 
         // Normalize to a uniform distribution
         double[] distribution = new double[actions.length];
 
-        double norm = 1.0 / distribution.length;
+        double norm = 1.0 / actions.length;
+
         if (initialStrategy == null) {
-            for (int i = 0; i < distribution.length; i++) {
-                distribution[i] = norm;
-            }
+
+
+            Arrays.fill(distribution, norm);
+
         } else {
             for (int i = 0; i < actions.length; i++) {
                 distribution[i] = initialStrategy.getProbability(actions[i]).doubleValue();
             }
         }
 
-
-        // Lowest possible payoff
-        double W = Double.POSITIVE_INFINITY;
-
-        for(SymmetricOutcome symmetricOutcome : Games.symmetricTraversal(game) ) {
-            SymmetricPayoff payoff = game.payoff(symmetricOutcome);
-            for(Action action : (Set<Action>)payoff.actions()) {
-                W = Math.min(W, payoff.getPayoff(action).getValue());
-            }
-        }
-
-
         // Initialize current strategy
         Strategy currentStrategy = buildStrategy(actions, distribution);
 
         fireUpdatedStrategy(currentStrategy, Double.POSITIVE_INFINITY, 0, Double.NaN);
 
+        double W = pm.minPayoff();
+
         loop:
         for (int iteration = 1; true; iteration++) {
 
-            double epsilon = 0;
-
-
             // Zero all expected payoffs
-            double[] payoffs = new double[actions.length];
-
-            // Create a mixed profile of all players
-            // playing the current strategy.
-            for (int i = 0; i < players.length; i++) {
-                strategies[i] = currentStrategy;
-            }
+            double[] payoffs = new double[distribution.length];
 
 
-            double currentPayoff = game.payoff(Games.createProfile(players, strategies)).getPayoff(players[0]).getValue();
+            double currentPayoff = pm.getProfilePayoff(distribution);
+
+
+            double[] deviation = new double[distribution.length];
 
             // Switch the first players strategy
-            for (int i = 0; i < actions.length; i++) {
-                Strategy s = buildPureStrategy(actions, i);
+            for (int i = 0; i < payoffs.length; i++) {
 
-                strategies[0] = s;
+                deviation[i] = 1.0;
 
-                Payoff payoff = game.payoff(Games.createProfile(players, strategies));
+                payoffs[i] = pm.getProfilePayoff(distribution, deviation);
 
-
-                payoffs[i] = payoff.getPayoff(players[0]).getValue();
+                deviation[i] = 0.0;
             }
+
 
             // Get the next distribution
             double[] next = nextDistribution(payoffs, distribution, W);
+
+            double epsilon = 0;
 
             for (double payoff : payoffs) {
                 epsilon = Math.max(payoff - currentPayoff, epsilon);
@@ -132,12 +122,12 @@ public class SymmetricReplicatorDynamics {
             if (terminate(norm, iteration))
                 break;
         }
-
+        
         return currentStrategy;
     }
 
     private void fireUpdatedStrategy(Strategy currentStrategy, double norm, int iteration, double epsilon) {
-        if(printStream!=null) {
+        if (printStream != null) {
             printStream.println(String.format("(s: %s norm: %f iteration: %d epsilon: %s", currentStrategy, norm, iteration, epsilon));
         }
     }
@@ -153,10 +143,10 @@ public class SymmetricReplicatorDynamics {
         }
 
         for (int i = 0; i < distribution.length; i++) {
-            if(sum > 0) {
+            if (sum > 0) {
                 next[i] /= sum;
             } else {
-                next[i] = 1.0/distribution.length;
+                next[i] = 1.0 / distribution.length;
             }
         }
 
@@ -168,20 +158,6 @@ public class SymmetricReplicatorDynamics {
         for (int i = 0; i < number.length; i++) {
             number[i] = distribution[i];
         }
-
-        return Games.createStrategy(actions, number);
-    }
-
-    private Strategy buildPureStrategy(Action[] actions, int index) {
-        Number[] number = new Number[actions.length];
-        for (int i = 0; i < number.length; i++) {
-            if (i == index) {
-                number[i] = 1.0;
-            } else {
-                number[i] = 0.0;
-            }
-        }
-
 
         return Games.createStrategy(actions, number);
     }
@@ -207,6 +183,31 @@ public class SymmetricReplicatorDynamics {
         }
 
         return norm;
+    }
+
+    private PayoffMatrix createPayoffMatrix(SymmetricGame game, Player[] players, Action[] actions) {
+
+        Action[] playerActions = new Action[players.length];
+
+        PayoffMatrix pm = new PayoffMatrix(players.length, actions.length);
+
+        int[] indices = new int[players.length];
+
+        for (int i = 0; i < pm.getTotalSize(); i++) {
+            pm.expand(i, indices);
+
+            for (int j = 0; j < players.length; j++) {
+                playerActions[j] = actions[indices[j]];
+            }
+
+            Outcome outcome = Games.createOutcome(players, playerActions);
+
+            Payoff p = game.payoff(outcome);
+            pm.setPayoff(i, p.getPayoff(players[0]).getValue());
+        }
+
+
+        return pm;
     }
 
 }

@@ -21,6 +21,7 @@ package edu.umich.eecs.ai.egat.minform.search;
 import edu.umich.eecs.ai.egat.game.Action;
 import edu.umich.eecs.ai.egat.game.SymmetricGame;
 import edu.umich.eecs.ai.egat.game.ActionReducedSymmetricGame;
+import edu.umich.eecs.ai.egat.game.SymmetricMultiAgentSystem;
 import edu.umich.eecs.ai.egat.minform.SymmetricRationalizableFinder;
 
 import java.util.Set;
@@ -31,7 +32,7 @@ import java.util.HashSet;
 /**
  * @author Patrick R. Jordan
  */
-public class SymmetricEpsilonGreedyFormationSearch extends EpsilonGreedyFormationSearch<SymmetricGame, Set<Action>> {
+public class SymmetricEpsilonGreedyFormationSearch extends EpsilonGreedyFormationSearch<SymmetricGame, SymmetricMultiAgentSystem, Set<Action>> {
     private Action[] actions;
     private SymmetricRationalizableFinder rationalizableFinder;
     private double tolerance;
@@ -124,6 +125,21 @@ public class SymmetricEpsilonGreedyFormationSearch extends EpsilonGreedyFormatio
         return node;
     }
 
+    protected FormationSearchNode<SymmetricGame, Set<Action>> createNode(Set<Action> strategySpace) {
+        SymmetricGame game = new ActionReducedSymmetricGame(getBase(), strategySpace);
+
+        int total = calculateGameSize(strategySpace.size(), game.players().size());
+
+
+        double epsilon = rationalizableFinder.rationalizableEpsilon(game, getBase());
+        epsilon = Math.round(epsilon / tolerance) * tolerance;
+
+        FormationSearchNode<SymmetricGame, Set<Action>> node = new FormationSearchNode<SymmetricGame, Set<Action>>(game, strategySpace, epsilon, total);
+
+
+        return node;
+    }
+    
     protected int calculateGameSize(int strategies, int players) {
         int n = strategies + players - 1;
 
@@ -142,4 +158,65 @@ public class SymmetricEpsilonGreedyFormationSearch extends EpsilonGreedyFormatio
 
         return total;
     }
+
+    protected void initialNodes(SymmetricGame base, Queue<FormationSearchNode<SymmetricGame, Set<Action>>> queue,
+                                Map<Set<Action>, FormationSearchNode<SymmetricGame, Set<Action>>> nodes,
+                                SymmetricMultiAgentSystem bound) {
+
+        for (Action action : actions) {
+            if (bound.getActions().contains(action)) {
+                Set<Action> strategySpace = new HashSet<Action>();
+
+                strategySpace.add(action);
+
+                SymmetricGame game = new ActionReducedSymmetricGame(base, strategySpace);
+
+
+                double epsilon = rationalizableFinder.rationalizableEpsilon(game, base);
+                epsilon = Math.round(epsilon / tolerance) * tolerance;
+
+                FormationSearchNode<SymmetricGame, Set<Action>> node = new FormationSearchNode<SymmetricGame, Set<Action>>(game, strategySpace, epsilon, 1);
+
+                queue.offer(node);
+                nodes.put(strategySpace, node);
+            }
+        }
+    }
+
+    protected void expandNode(FormationSearchNode<SymmetricGame, Set<Action>> node,
+                              Queue<FormationSearchNode<SymmetricGame, Set<Action>>> queue,
+                              Map<Set<Action>, FormationSearchNode<SymmetricGame, Set<Action>>> nodes,
+                              SymmetricMultiAgentSystem bound) {
+
+        Set<Action> currentPlayerActions = node.getGame().getActions();
+
+        if (currentPlayerActions.size() != bound.getActions().size()) {
+
+            for (Action action : actions) {
+
+                if (bound.getActions().contains(action) && !currentPlayerActions.contains(action)) {
+
+                    Set<Action> key = new HashSet<Action>(currentPlayerActions);
+
+                    key.add(action);
+
+
+                    if (!nodes.containsKey(key)) {
+                        double tau = rationalizableFinder.rationalizableTau(action, node.getGame(), getBase());
+
+                        if (tau > 0) {
+                            FormationSearchNode<SymmetricGame, Set<Action>> child = createNode(key);
+
+                            if (child != null) {
+                                queue.offer(child);
+                                nodes.put(key, child);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    
 }
