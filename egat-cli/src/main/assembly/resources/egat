@@ -8,4 +8,4 @@ for i in $( ls ${LIB}/*.jar ); do
 done
 
 
-java -cp $CLASSPATH edu.umich.eecs.ai.egat.cli.Main $@
+java -cp $CLASSPATH egat.cli.Main $@
