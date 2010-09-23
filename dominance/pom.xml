@@ -1,6 +1,6 @@
 <project>
     <parent>
-        <groupId>edu.umich.eecs.ai.egat</groupId>
+        <groupId>egat</groupId>
         <artifactId>egat</artifactId>
         <version>0.9-SNAPSHOT</version>
     </parent>
@@ -12,12 +12,12 @@
     <description>Empirical Game Analysis Toolkit Dominance package</description>
     <dependencies>
         <dependency>
-            <groupId>edu.umich.eecs.ai.egat</groupId>
+            <groupId>egat</groupId>
             <artifactId>egat-game</artifactId>
             <version>0.9-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>edu.umich.eecs.ai.egat</groupId>
+            <groupId>egat</groupId>
             <artifactId>egat-game-xml</artifactId>
             <version>0.9-SNAPSHOT</version>
             <scope>test</scope>
@@ -43,7 +43,7 @@
                 <role>Research Scientist</role>
                 <role>Java Developer</role>
             </roles>
-            <url>http://www.eecs.umich.edu/~prjordan</url>
+            <url>http://www.patrickrjordan.com</url>
             <organization>University of Michigan AI Laboratory</organization>
             <timezone>-5</timezone>
         </developer>

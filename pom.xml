@@ -1,6 +1,6 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>edu.umich.eecs.ai.egat</groupId>
+  <groupId>egat</groupId>
   <version>0.9-SNAPSHOT</version>
   <artifactId>egat</artifactId>
   <packaging>pom</packaging>
@@ -16,7 +16,7 @@
          <roles>
             <role>Research Scientist</role>
          </roles>
-         <url>http://www.patrickrjordan.com/~prjordan</url>
+         <url>http://www.patrickrjordan.com</url>
          <organization>University of Michigan AI Laboratory</organization>
          <timezone>-5</timezone>
        </developer>           
@@ -39,18 +39,4 @@
       <url>http://www.eecs.umich.edu/~prjordan/egat/repository</url>
 	</repository>
   </repositories>
-  <distributionManagement>
-    <site>
-      <id>web-eecs-umich-edu</id>
-      <url>scp://web.eecs.umich.edu/u/p/prjordan/public_html/egat/0.9-SNAPSHOT</url>
-    </site>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>web-eecs-umich-edu</id>
-      <name>EGAT Releases</name>
-      <url>scp://web.eecs.umich.edu/u/p/prjordan/public_html/egat/repository</url>
-      <layout>default</layout>
-    </repository>
-    <downloadUrl>http://www.eecs.umich.edu/~prjordan/egat/repository</downloadUrl>
-  </distributionManagement>
 </project>
